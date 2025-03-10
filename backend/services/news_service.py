@@ -1,6 +1,8 @@
 """Service class for handling news data retrieval"""
 from newsapi import NewsApiClient
 
+from config import get_config
+
 
 class NewsService:
     """News Service class
@@ -10,7 +12,8 @@ class NewsService:
 
     def __init__(self):
         """see class doc"""
-        self.news_api_client = NewsApiClient(api_key="8a29050da53e407ba8e8a5497bfa4032")  # TODO: config var
+        self.config = get_config()
+        self.news_api_client = NewsApiClient(api_key=self.config.news_api_key)
 
     # TODO: category becomes an Enum.. find common ground of what categories i want to support
     def fetch_top_headlines(self, keyword: str = None, sources: str = None, category: str = None, page: int = None,
