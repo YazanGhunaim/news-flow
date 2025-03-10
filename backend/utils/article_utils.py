@@ -12,15 +12,19 @@ class ArticleUtils:
     """Class to encapsulate utility methods"""
 
     @staticmethod
-    def append_full_content_to_article(article: BaseArticle) -> Optional[ProcessedArticle]:
+    def process_article(article: BaseArticle) -> Optional[ProcessedArticle]:
         """Fetches and appends full content retrieved by parsing the HTML.
+
+        generates summary using nlp provided by newspaper module
 
         :param article: BaseArticle model
         :return: ProcessedArticle if successful, else None
         """
         try:
             full_content = ArticleHTMLParser.parse_article(article.url)
-            return ProcessedArticle(**article.model_dump(), fullContent=full_content)
+            # summary = ArticleHTMLParser.get_summary(article.url)
+
+            return ProcessedArticle(**article.model_dump(exclude="content"), content=full_content)
         except Exception as e:
             log.error(f"Failed parsing of article with error: {e}")
             return None
@@ -36,5 +40,5 @@ class ArticleUtils:
         """
         return [
             processed_article for article in articles
-            if (processed_article := ArticleUtils.append_full_content_to_article(article)) is not None
+            if (processed_article := ArticleUtils.process_article(article)) is not None
         ]

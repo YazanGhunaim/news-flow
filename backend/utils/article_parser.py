@@ -25,7 +25,10 @@ class ArticleHTMLParser:
     def get_summary(url: str) -> str:
         """Uses NLP to generate a summary of the article
 
-        * Doesn't work most the time ? *
+        needed for summary
+        import nltk
+        nltk.download('punkt')
+        nltk.download('punkt_tab')
 
         :param url: article url
         :return: article summary
@@ -45,8 +48,8 @@ if __name__ == "__main__":
 
     for url in urls:
         pprint(f"Article url: {url}")
+        pprint(f"Summary: {ArticleHTMLParser.get_summary(url)}")
         try:
-            # pprint(f"Summary: {NewsArticleHTMLParser.get_summary(url)}")
             pprint(ArticleHTMLParser.parse_article(url))
         except Exception:
             pass

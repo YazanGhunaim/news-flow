@@ -55,8 +55,8 @@ class ProcessedArticle(BaseModel):
     image_url: Optional[str]
     date: str
 
+    # summary: str  # using newspaper nlp
     content: str
-    fullContent: str
 
 
 class BaseNewsResponse(BaseModel):
