@@ -6,7 +6,7 @@ from newspaper import Article
 from services.news_service import NewsService
 
 
-class NewsArticleHTMLParser:
+class ArticleHTMLParser:
     """Parser class that helps get the full content of articles from sources who don't provide it"""
 
     @staticmethod
@@ -41,12 +41,15 @@ if __name__ == "__main__":
     news_service = NewsService()
 
     top_headlines = news_service.fetch_top_headlines(page_size=10)
-    urls = [article["url"] for article in top_headlines["articles"]]
+    urls = [article.url for article in top_headlines.articles]
 
     for url in urls:
         pprint(f"Article url: {url}")
-        # pprint(f"Summary: {NewsArticleHTMLParser.get_summary(url)}")
-        pprint(NewsArticleHTMLParser.parse_article(url))
+        try:
+            # pprint(f"Summary: {NewsArticleHTMLParser.get_summary(url)}")
+            pprint(ArticleHTMLParser.parse_article(url))
+        except Exception:
+            pass
 
     # cnn_paper = newspaper.build('http://cnn.com')
     # for article in cnn_paper.articles:
