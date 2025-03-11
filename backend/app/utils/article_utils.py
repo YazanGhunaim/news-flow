@@ -2,8 +2,8 @@
 from logging import getLogger
 from typing import List, Optional
 
-from schemas.news_articles import BaseArticle, ProcessedArticle
-from utils.article_parser import ArticleHTMLParser
+from app.schemas.news_articles import BaseArticle, ProcessedArticle
+from app.utils.article_parser import ArticleHTMLParser
 
 log = getLogger(__name__)
 
@@ -24,7 +24,7 @@ class ArticleUtils:
             full_content = ArticleHTMLParser.parse_article(article.url)
             # summary = ArticleHTMLParser.get_summary(article.url)
 
-            return ProcessedArticle(**article.model_dump(exclude="content"), content=full_content)
+            return ProcessedArticle(**article.model_dump(exclude={"content"}), content=full_content)
         except Exception as e:
             log.error(f"Failed parsing of article with error: {e}")
             return None

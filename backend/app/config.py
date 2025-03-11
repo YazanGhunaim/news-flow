@@ -2,7 +2,7 @@
 import os
 from functools import lru_cache
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DOTENV = os.path.join(os.path.dirname(__file__), ".env")
 
@@ -11,8 +11,7 @@ class Config(BaseSettings):
     """pydantic settings class providing interface to .env file"""
     news_api_key: str = ""
 
-    class Config:
-        env_file = DOTENV
+    model_config = SettingsConfigDict(env_file=DOTENV)
 
 
 @lru_cache

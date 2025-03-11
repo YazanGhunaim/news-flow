@@ -3,7 +3,7 @@ from pprint import pprint
 
 from newspaper import Article
 
-from services.news_service import NewsService
+from app.services.news_service import NewsService
 
 
 class ArticleHTMLParser:
