@@ -4,10 +4,10 @@ from fastapi.params import Depends
 from starlette import status
 from starlette.exceptions import HTTPException
 
-from dependencies.news_service import get_news_service
-from schemas.news_articles import NewsCategory, ProcessedNewsResponse
-from services.news_service import NewsService
-from utils.article_utils import ArticleUtils
+from app.dependencies.news_service import get_news_service
+from app.schemas.news_articles import NewsCategory, ProcessedNewsResponse
+from app.services.news_service import NewsService
+from app.utils.article_utils import ArticleUtils
 
 router = APIRouter(prefix="/articles", tags=["News Articles"])
 

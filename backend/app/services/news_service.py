@@ -3,8 +3,8 @@ from pprint import pprint
 
 from newsapi import NewsApiClient
 
-from config import get_config
-from schemas.news_articles import BaseNewsResponse, NewsCategory
+from app.config import get_config
+from app.schemas.news_articles import BaseNewsResponse, NewsCategory
 
 
 class NewsService:
@@ -69,6 +69,6 @@ class NewsService:
 
 if __name__ == "__main__":
     news_service = NewsService()
-    pprint(news_service.fetch_top_headlines(category="business"))
+    pprint(news_service.fetch_top_headlines(category="business", page_size=1))
     # pprint(news_service.fetch_everything(keyword="Technology", page_size=5))
     # pprint(news_service.fetch_sources())

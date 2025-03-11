@@ -62,7 +62,6 @@ class ProcessedArticle(BaseModel):
 class BaseNewsResponse(BaseModel):
     """Model of the API news response"""
 
-    status: str
     total_results: int = Field(alias="totalResults")
     articles: List[BaseArticle]
 
