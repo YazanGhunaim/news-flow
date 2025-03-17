@@ -4,7 +4,7 @@ import logging
 from fastapi import FastAPI
 from starlette import status
 
-from app.routers import articles
+from app.routers import articles, users, users_auth
 
 # configuring logger
 logging.basicConfig(
@@ -19,6 +19,8 @@ log.info("Starting NewsFlow!")
 app = FastAPI()
 
 app.include_router(articles.router)
+app.include_router(users_auth.router)
+app.include_router(users.router)
 
 
 @app.get("/", status_code=status.HTTP_200_OK)

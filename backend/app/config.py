@@ -29,6 +29,7 @@ def get_config():
     """getter for config"""
     return Config()
 
+
 if __name__ == "__main__":
     config = get_config()
     print(config.supabase_prod_url)
