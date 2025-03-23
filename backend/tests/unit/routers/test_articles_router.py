@@ -33,6 +33,8 @@ def test_get_top_headlines(client_fixture, mock_news_service, base_article_fixtu
         assert response.status_code == 200
         assert response.json() == expected_response
 
+        app.dependency_overrides.clear()
+
 
 def test_get_top_headlines_error(client_fixture, mock_news_service):
     """Simulate an error when fetching top headlines"""
@@ -44,6 +46,8 @@ def test_get_top_headlines_error(client_fixture, mock_news_service):
     # Check for 400 error
     assert response.status_code == 400
     assert response.json() == {"detail": "Something went wrong"}
+
+    app.dependency_overrides.clear()
 
 
 def test_get_everything(client_fixture, mock_news_service, base_article_fixture, processed_article_fixture):
@@ -78,6 +82,8 @@ def test_get_everything(client_fixture, mock_news_service, base_article_fixture,
             ]
         }
 
+        app.dependency_overrides.clear()
+
 
 def test_get_everything_error(client_fixture, mock_news_service):
     """Simulate an error when fetching articles"""
@@ -90,3 +96,5 @@ def test_get_everything_error(client_fixture, mock_news_service):
     # Check for 400 error
     assert response.status_code == 400
     assert response.json() == {"detail": "Something went wrong"}
+
+    app.dependency_overrides.clear()

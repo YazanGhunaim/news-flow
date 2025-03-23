@@ -23,6 +23,17 @@ def test_api_client():
     return TestClient(app)
 
 
+@pytest.fixture(scope="session", autouse=True)
+def override_supabase_client(test_supabase_project_client):
+    """override Supabase client for all tests in session
+
+    Then clear the override
+    """
+    app.dependency_overrides[get_supabase_client] = lambda: test_supabase_project_client
+    yield
+    app.dependency_overrides.clear()
+
+
 @pytest.fixture(scope="session")
 def registered_user_json():
     """Json of already registered user
@@ -35,7 +46,7 @@ def registered_user_json():
         "options":
             {
                 "data": {
-                    "username": "blitz",
+                    "username": "yazanlouaighunaim",
                     "name": "Yazan Ghunaim"
                 }
             }
