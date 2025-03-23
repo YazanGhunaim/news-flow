@@ -16,6 +16,7 @@ router = APIRouter(prefix="/users", tags=["User Auth"])
 
 @router.post("/sign_up", status_code=status.HTTP_200_OK, responses={
     status.HTTP_200_OK: {"description": "User signed up successfully."},
+    status.HTTP_409_CONFLICT: {"description": "User already exists."},
     status.HTTP_400_BAD_REQUEST: {"description": "User sign up failed."},
 })
 def sign_up(user: UserSignUp, supabase_client: Client = Depends(get_supabase_client)) -> AuthResponse:
@@ -76,9 +77,10 @@ def sign_out(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
 
 
+# TODO: Update triggers and function
 @router.put("/update", responses={
-    status.HTTP_200_OK: {"description": "User signed in successfully."},
-    status.HTTP_401_UNAUTHORIZED: {"description": "User sign in failed."},
+    status.HTTP_200_OK: {"description": "User updated successfully."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User update failed."},
 })
 def update_user(
         user: UserUpdate,
