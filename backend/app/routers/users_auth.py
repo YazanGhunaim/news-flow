@@ -77,7 +77,6 @@ def sign_out(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
 
 
-# TODO: Update triggers and function
 @router.put("/update", responses={
     status.HTTP_200_OK: {"description": "User updated successfully."},
     status.HTTP_401_UNAUTHORIZED: {"description": "User update failed."},
