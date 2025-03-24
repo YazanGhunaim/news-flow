@@ -1,7 +1,10 @@
 """Tests related to services"""
+import pytest
+
 from app.schemas.news_articles import BaseNewsResponse
 
 
+@pytest.mark.unit
 def test_fetch_top_headlines(news_service_fixture, mock_news_api_client, base_article_fixture):
     """Test fetch_top_headlines method."""
     mock_response = {
@@ -18,6 +21,7 @@ def test_fetch_top_headlines(news_service_fixture, mock_news_api_client, base_ar
     assert result.articles[0].title == base_article_fixture.title
 
 
+@pytest.mark.unit
 def test_fetch_everything(news_service_fixture, mock_news_api_client, base_article_fixture):
     """Test fetch_everything method."""
     mock_response = {
@@ -37,6 +41,7 @@ def test_fetch_everything(news_service_fixture, mock_news_api_client, base_artic
     assert result.articles[0].title == base_article_fixture.title
 
 
+@pytest.mark.unit
 def test_fetch_sources(news_service_fixture, mock_news_api_client):
     """Test fetch_sources method."""
     mock_response = {

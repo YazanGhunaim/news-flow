@@ -1,10 +1,13 @@
 """article utils related tests"""
 from unittest.mock import patch
 
+import pytest
+
 from app.schemas.news_articles import ProcessedArticle
 from app.utils.article_utils import ArticleUtils
 
 
+@pytest.mark.unit
 @patch("app.utils.article_parser.ArticleHTMLParser.parse_article")
 def test_process_article_success(mock_parse_article, base_article_fixture):
     """Test process_article when parsing succeeds."""
@@ -18,6 +21,7 @@ def test_process_article_success(mock_parse_article, base_article_fixture):
     assert result.content == "Full content of the article."
 
 
+@pytest.mark.unit
 @patch("app.utils.article_parser.ArticleHTMLParser.parse_article")
 def test_process_article_failure(mock_parse_article, base_article_fixture):
     """Test process_article when parsing fails."""
@@ -28,6 +32,7 @@ def test_process_article_failure(mock_parse_article, base_article_fixture):
     assert result is None
 
 
+@pytest.mark.unit
 @patch("app.utils.article_parser.ArticleHTMLParser.parse_article")
 def test_process_articles_mixed(mock_parse_article, base_article_fixture):
     """Test process_articles with a mix of successful and failed parsing."""
