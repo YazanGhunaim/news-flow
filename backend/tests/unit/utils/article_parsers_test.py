@@ -4,6 +4,7 @@ import pytest
 from app.utils.article_parser import ArticleHTMLParser
 
 
+@pytest.mark.unit
 def test_parse_valid_article(base_article_fixture):
     """Tests successfully article parsing"""
     try:
@@ -13,6 +14,7 @@ def test_parse_valid_article(base_article_fixture):
         pytest.fail(f"Parsing article failed: {e}")
 
 
+@pytest.mark.unit
 def test_parse_invalid_article(base_article_fixture):
     """Tests unsuccessful article parsing"""
     with pytest.raises(Exception):

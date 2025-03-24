@@ -4,7 +4,7 @@ import logging
 from fastapi import FastAPI
 from starlette import status
 
-from app.routers import articles, users, users_auth
+from app.api import articles, users, users_auth
 
 # configuring logger
 logging.basicConfig(

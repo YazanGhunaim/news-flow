@@ -1,6 +1,8 @@
 """Article endpoint related tests"""
 from unittest.mock import patch
 
+import pytest
+
 from app.dependencies.news_service import get_news_service
 from app.main import app
 from app.schemas.news_articles import BaseNewsResponse
@@ -8,6 +10,7 @@ from tests.unit.conftest import processed_article_fixture
 from tests.unit.routers.conftest import client_fixture
 
 
+@pytest.mark.unit
 def test_get_top_headlines(client_fixture, mock_news_service, base_article_fixture, processed_article_fixture):
     """Test for the /articles/top-headlines endpoint"""
     # Define mock return data for the NewsService
@@ -36,6 +39,7 @@ def test_get_top_headlines(client_fixture, mock_news_service, base_article_fixtu
         app.dependency_overrides.clear()
 
 
+@pytest.mark.unit
 def test_get_top_headlines_error(client_fixture, mock_news_service):
     """Simulate an error when fetching top headlines"""
     mock_news_service.fetch_top_headlines.side_effect = Exception("Something went wrong")
@@ -50,6 +54,7 @@ def test_get_top_headlines_error(client_fixture, mock_news_service):
     app.dependency_overrides.clear()
 
 
+@pytest.mark.unit
 def test_get_everything(client_fixture, mock_news_service, base_article_fixture, processed_article_fixture):
     """Test for the /articles/everything endpoint"""
     # Define mock return data for the NewsService
@@ -85,6 +90,7 @@ def test_get_everything(client_fixture, mock_news_service, base_article_fixture,
         app.dependency_overrides.clear()
 
 
+@pytest.mark.unit
 def test_get_everything_error(client_fixture, mock_news_service):
     """Simulate an error when fetching articles"""
     mock_news_service.fetch_everything.side_effect = Exception("Something went wrong")

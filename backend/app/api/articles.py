@@ -6,12 +6,13 @@ from starlette import status
 from starlette.exceptions import HTTPException
 from supabase import Client
 
+from app.database.repositories.article_repo import ArticleRepository
 from app.dependencies.auth import get_auth_headers
 from app.dependencies.news_service import get_news_service
 from app.dependencies.supabase_client import get_supabase_client
-from app.models.bookmarked_article import BookmarkedArticle
 from app.schemas.auth_tokens import AuthTokens
 from app.schemas.news_articles import NewsCategory, ProcessedArticle, ProcessedNewsResponse
+from app.services.article_service import ArticleService
 from app.services.news_service import NewsService
 from app.utils.article_utils import ArticleUtils
 from app.utils.auth import set_supabase_session
@@ -59,7 +60,7 @@ def get_everything(
 
 
 @router.post("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={
-    status.HTTP_200_OK: {"description": "Successfully retrieved articles."},
+    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked articles."},
     status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving articles."},
 })
@@ -74,12 +75,8 @@ def bookmark_article(
         auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
         uid = auth_response.session.user.id
 
-        # Write Data to bookmarked_articles db
-        data = BookmarkedArticle(user_id=uid, **article.model_dump())
-
-        (
-            supabase_client.table("bookmarked_articles").insert(data.model_dump()).execute()
-        )
+        article_service = ArticleService(ArticleRepository(supabase_client))
+        article_service.bookmark_article(article, uid)
     except AuthApiError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
