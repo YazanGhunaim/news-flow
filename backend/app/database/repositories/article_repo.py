@@ -4,6 +4,7 @@ from typing import List
 
 from supabase import Client
 
+from app.database.models.article_summary import ArticleSummary
 from app.database.models.bookmarked_article import BookmarkedArticle
 from app.database.repositories.abstract_repo import ABCRepository
 from app.schemas.news_articles import ProcessedArticle
@@ -32,3 +33,8 @@ class ArticleRepository(ABCRepository):
         )
 
         return response.data
+
+    def create_article_summary(self, article_summary: ArticleSummary):
+        """creates an article summary in db"""
+        response = self.db.table("article_summaries").insert(article_summary.model_dump()).execute()
+        return response

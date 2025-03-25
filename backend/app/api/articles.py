@@ -60,9 +60,9 @@ def get_everything(
 
 
 @router.post("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={
-    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked articles."},
+    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked article."},
     status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
-    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving articles."},
+    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while bookmarking article."},
 })
 def bookmark_article(
         article: ProcessedArticle,
@@ -77,6 +77,29 @@ def bookmark_article(
 
         article_service = ArticleService(ArticleRepository(supabase_client))
         article_service.bookmark_article(article, uid)
+    except AuthApiError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
+@router.post("/summarize", status_code=status.HTTP_200_OK, responses={
+    status.HTTP_200_OK: {"description": "Successfully summarized article."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
+    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while summarizing article."},
+})
+def bookmark_article(
+        article: ProcessedArticle,
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
+):
+    """Bookmarks an article for specific user"""
+    try:
+        # Set user session
+        set_supabase_session(auth=auth, supabase_client=supabase_client)
+
+        article_service = ArticleService(ArticleRepository(supabase_client))
+        return article_service.summarize_article(article)
     except AuthApiError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:

@@ -1,15 +1,14 @@
 """Bookmarked article orm model"""
-import uuid
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from app.schemas.news_articles import Source
 
 
 class BookmarkedArticle(BaseModel):
     """Article alongside user_id"""
-    user_id: uuid
+    user_id: str
     source: Source
     author: Optional[str]
     title: str
@@ -22,5 +21,3 @@ class BookmarkedArticle(BaseModel):
 
     # summary: str  # using newspaper nlp
     content: str
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
