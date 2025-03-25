@@ -16,10 +16,6 @@ alter table "public"."article_summaries" add constraint "article_summaries_pkey"
 
 alter table "public"."article_summaries" add constraint "article_summaries_article_url_key" UNIQUE using index "article_summaries_article_url_key";
 
-alter table "public"."bookmarked_articles" add constraint "bookmarked_articles_url_fkey" FOREIGN KEY (url) REFERENCES article_summaries(article_url) ON UPDATE RESTRICT ON DELETE RESTRICT not valid;
-
-alter table "public"."bookmarked_articles" validate constraint "bookmarked_articles_url_fkey";
-
 grant delete on table "public"."article_summaries" to "anon";
 
 grant insert on table "public"."article_summaries" to "anon";
@@ -76,3 +72,11 @@ as permissive
 for select
 to public
 using (true);
+
+
+create policy "Allow authenticated users to delete"
+on "public"."article_summaries"
+as permissive
+for delete
+to public
+using ((auth.uid() IS NOT NULL));
