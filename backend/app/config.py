@@ -11,6 +11,8 @@ class Config(BaseSettings):
     """pydantic settings class providing interface to .env file"""
     news_api_key: str = ""
 
+    openai_key: str = ""
+
     supabase_is_prod: bool = True
 
     supabase_prod_url: str = ""

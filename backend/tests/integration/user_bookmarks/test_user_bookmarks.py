@@ -38,4 +38,6 @@ class TestUserBookmarks:
         # Confirm bookmarked correctly
         response_get_preferences = test_api_client.get("/users/bookmarks", headers=authorization_header)
         assert response_get_preferences.status_code == 200
+
+        processed_article_json["summary"] = None  # workaround
         assert response_get_preferences.json() == [processed_article_json]

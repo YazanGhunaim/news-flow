@@ -4,6 +4,7 @@ from fastapi.params import Depends
 from gotrue.errors import AuthApiError
 from starlette import status
 from starlette.exceptions import HTTPException
+from starlette.responses import JSONResponse
 from supabase import Client
 
 from app.database.repositories.article_repo import ArticleRepository
@@ -60,9 +61,9 @@ def get_everything(
 
 
 @router.post("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={
-    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked articles."},
+    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked article."},
     status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
-    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving articles."},
+    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while bookmarking article."},
 })
 def bookmark_article(
         article: ProcessedArticle,
@@ -77,6 +78,68 @@ def bookmark_article(
 
         article_service = ArticleService(ArticleRepository(supabase_client))
         article_service.bookmark_article(article, uid)
+    except AuthApiError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
+@router.post(
+    "/summary",
+    status_code=status.HTTP_200_OK,
+    response_model=ProcessedArticle,
+    responses={
+        status.HTTP_200_OK: {"description": "Successfully retrieved summary."},
+        status.HTTP_201_CREATED: {"description": "Successfully summarized article."},
+        status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
+        status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while summarizing article."},
+    })
+def summarize_article(
+        article: ProcessedArticle,
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
+):
+    """Summarized an article"""
+    try:
+        # Set user session
+        set_supabase_session(auth=auth, supabase_client=supabase_client)
+
+        article_service = ArticleService(ArticleRepository(supabase_client))
+        article_summary, is_new = article_service.summarize_article(article)
+
+        return JSONResponse(
+            ProcessedArticle(
+                **article.model_dump(exclude_unset=True),
+                summary=article_summary[0]["summary"]
+            ).model_dump(),
+            status_code=status.HTTP_201_CREATED if is_new else status.HTTP_200_OK
+        )
+    except AuthApiError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
+@router.delete(
+    "/summary",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        status.HTTP_204_NO_CONTENT: {"description": "Successfully deleted summary."},
+        status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
+        status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while summarizing article."},
+    })
+def delete_summary(
+        article_url: str,
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
+):
+    """Summarized an article"""
+    try:
+        # Set user session
+        set_supabase_session(auth=auth, supabase_client=supabase_client)
+
+        article_service = ArticleService(ArticleRepository(supabase_client))
+        article_service.delete_summary(article_url)
     except AuthApiError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:

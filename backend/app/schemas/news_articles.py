@@ -46,16 +46,16 @@ class ProcessedArticle(BaseModel):
     Appending full content etc...
     """
     source: Source
-    author: Optional[str]
+    author: Optional[str] = None
     title: str
     description: str
     url: str
 
     # No need to specify field name as we take in the BaseArticle to process an article
-    image_url: Optional[str]
+    image_url: Optional[str] = None
     date: str
 
-    # summary: str  # using newspaper nlp
+    summary: Optional[str] = None
     content: str
 
 
