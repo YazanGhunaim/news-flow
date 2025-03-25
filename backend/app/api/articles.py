@@ -116,7 +116,10 @@ def summarize_article(
         auth: AuthTokens = Depends(get_auth_headers),
         supabase_client: Client = Depends(get_supabase_client),
 ):
-    """Summarized an article"""
+    """Summarizes an article
+
+    if an article already has an existing summary it retrieves it
+    """
     try:
         # Set user session
         set_supabase_session(auth=auth, supabase_client=supabase_client)
@@ -147,7 +150,7 @@ def delete_summary(
         auth: AuthTokens = Depends(get_auth_headers),
         supabase_client: Client = Depends(get_supabase_client),
 ):
-    """Summarized an article"""
+    """deletes a summary of an article"""
     try:
         # Set user session
         set_supabase_session(auth=auth, supabase_client=supabase_client)
