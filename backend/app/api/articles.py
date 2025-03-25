@@ -24,41 +24,57 @@ router = APIRouter(prefix="/articles", tags=["News Articles"])
 
 @router.get("/top-headlines", status_code=status.HTTP_200_OK, responses={
     status.HTTP_200_OK: {"description": "Successfully retrieved top headlines."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving top headlines."},
 }, response_model=ProcessedNewsResponse)
 def get_top_headlines(
         keyword: str = None, sources: str = None, category: NewsCategory = None, page: int = None,
         page_size: int = None, language: str = "en",
-        news_service: NewsService = Depends(get_news_service)
+        news_service: NewsService = Depends(get_news_service),
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
 ):
     """retrieves headlining articles"""
     try:
+        # Set user session
+        set_supabase_session(auth=auth, supabase_client=supabase_client)
+
         headlines = news_service.fetch_top_headlines(keyword, sources, category, page, page_size, language)
 
         processed_articles = ArticleUtils.process_articles(articles=headlines.articles)
 
         return ProcessedNewsResponse(total_results=headlines.total_results, articles=processed_articles)
+    except (AuthApiError, IndexError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
 
 
 @router.get("/everything", status_code=status.HTTP_200_OK, responses={
     status.HTTP_200_OK: {"description": "Successfully retrieved articles."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving articles."},
 }, response_model=ProcessedNewsResponse)
 def get_everything(
         keyword: str, page: int = None, page_size: int = None, sources: str = None, language: str = "en",
-        news_service: NewsService = Depends(get_news_service)
+        news_service: NewsService = Depends(get_news_service),
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
 ):
     """retrieves every available article"""
     try:
+        # Set user session
+        set_supabase_session(auth=auth, supabase_client=supabase_client)
+
         headlines = news_service.fetch_everything(keyword, page, page_size, sources, language)
 
         processed_articles = ArticleUtils.process_articles(articles=headlines.articles)
 
         return ProcessedNewsResponse(total_results=headlines.total_results, articles=processed_articles)
+    except (AuthApiError, IndexError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}") from e
 
 
 @router.post("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={

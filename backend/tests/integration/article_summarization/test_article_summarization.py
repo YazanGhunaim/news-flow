@@ -6,6 +6,7 @@ from tests.integration.conftest import generate_auth_header
 
 @pytest.mark.integration
 @pytest.mark.llm
+@pytest.mark.costly
 class TestArticleSummarization:
     """Article summarization flow e2e tests"""
 
