@@ -9,7 +9,7 @@ from app.dependencies.auth import get_auth_headers
 from app.dependencies.supabase_client import get_supabase_client
 from app.schemas.auth_tokens import AuthTokens
 from app.schemas.users import UserSignIn, UserSignUp, UserUpdate
-from app.utils.auth import set_supabase_session
+from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
 router = APIRouter(prefix="/users", tags=["User Auth"])
 
@@ -29,7 +29,7 @@ def sign_up(user: UserSignUp, supabase_client: Client = Depends(get_supabase_cli
     try:
         response = supabase_client.auth.sign_up(user.model_dump(exclude_unset=True))
         return response
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{e}")
     except (AuthInvalidCredentialsError, Exception) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")

@@ -17,7 +17,7 @@ from app.schemas.news_articles import NewsCategory, ProcessedArticle, ProcessedN
 from app.services.article_service import ArticleService
 from app.services.news_service import NewsService
 from app.utils.article_utils import ArticleUtils
-from app.utils.auth import set_supabase_session
+from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
 router = APIRouter(prefix="/articles", tags=["News Articles"])
 
@@ -44,7 +44,7 @@ def get_top_headlines(
         processed_articles = ArticleUtils.process_articles(articles=headlines.articles)
 
         return ProcessedNewsResponse(total_results=headlines.total_results, articles=processed_articles)
-    except (AuthApiError, IndexError) as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
@@ -71,7 +71,7 @@ def get_everything(
         processed_articles = ArticleUtils.process_articles(articles=headlines.articles)
 
         return ProcessedNewsResponse(total_results=headlines.total_results, articles=processed_articles)
-    except (AuthApiError, IndexError) as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}") from e
@@ -95,7 +95,7 @@ def bookmark_article(
 
         article_service = ArticleService(ArticleRepository(supabase_client))
         article_service.bookmark_article(article, uid)
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
@@ -128,7 +128,7 @@ def summarize_article(
             article_summary,
             status_code=status.HTTP_201_CREATED if is_new else status.HTTP_200_OK
         )
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
@@ -154,7 +154,7 @@ def delete_summary(
 
         article_service = ArticleService(ArticleRepository(supabase_client))
         article_service.delete_summary(article_url)
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")

@@ -16,7 +16,7 @@ from app.schemas.news_articles import NewsCategory, ProcessedArticle
 from app.services.article_service import ArticleService
 from app.services.news_category_service import NewsCategoryService
 from app.services.user_service import UserService
-from app.utils.auth import set_supabase_session
+from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -38,7 +38,7 @@ def set_user_preferences(
             news_category_service=NewsCategoryService(NewsCategoryRepository(supabase_client))
         )
         user_service.add_user_preferences(uid, preferences)
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
@@ -59,7 +59,7 @@ def get_user_preferences(
             news_category_service=NewsCategoryService(NewsCategoryRepository(supabase_client))
         )
         return user_service.fetch_user_preferences(uid)
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
@@ -78,7 +78,7 @@ def get_user_bookmarks(
 
         article_service = ArticleService(ArticleRepository(supabase_client))
         return article_service.fetch_bookmarks_for_user(uid)
-    except AuthApiError as e:
+    except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")

@@ -75,4 +75,4 @@ class TestArticleRetrieval:
             params={"keyword": "bitcoin", "page_size": 2},
             headers=invalid_auth_header
         )
-        assert response_top_headlines.status_code == 401 # unauthorized
+        assert response_top_headlines.status_code == 401  # unauthorized
