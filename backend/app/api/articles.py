@@ -7,6 +7,7 @@ from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 from supabase import Client
 
+from app.database.models.article_summary import ArticleSummary
 from app.database.repositories.article_repo import ArticleRepository
 from app.dependencies.auth import get_auth_headers
 from app.dependencies.news_service import get_news_service
@@ -87,7 +88,7 @@ def bookmark_article(
 @router.post(
     "/summary",
     status_code=status.HTTP_200_OK,
-    response_model=ProcessedArticle,
+    response_model=ArticleSummary,
     responses={
         status.HTTP_200_OK: {"description": "Successfully retrieved summary."},
         status.HTTP_201_CREATED: {"description": "Successfully summarized article."},
@@ -108,10 +109,7 @@ def summarize_article(
         article_summary, is_new = article_service.summarize_article(article)
 
         return JSONResponse(
-            ProcessedArticle(
-                **article.model_dump(exclude_unset=True),
-                summary=article_summary[0]["summary"]
-            ).model_dump(),
+            article_summary,
             status_code=status.HTTP_201_CREATED if is_new else status.HTTP_200_OK
         )
     except AuthApiError as e:

@@ -55,7 +55,7 @@ class ProcessedArticle(BaseModel):
     image_url: Optional[str] = None
     date: str
 
-    summary: Optional[str] = None
+    # summary: Optional[str] = None
     content: str
 
 
