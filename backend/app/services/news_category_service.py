@@ -15,8 +15,8 @@ class NewsCategoryService:
         """see class doc"""
         self.repo = repo
 
-    def fetch_categories_by_value(self, preferences: List[NewsCategory]):
+    def fetch_categories_by_value(self, categories: List[NewsCategory]):
         """return categories and their associated db table id's using the value"""
-        user_category_preferences = [pref.value for pref in preferences]
-        response = self.repo.find_categories_by_value(user_category_preferences)
+        categories = [category.value for category in categories]
+        response = self.repo.find_categories_by_value(categories)
         return response

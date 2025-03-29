@@ -17,13 +17,13 @@ class NewsCategoryRepository(ABCRepository):
         """see class doc"""
         super().__init__(supabase_client)
 
-    def find_categories_by_value(self, preferences: List[NewsCategory]):
+    def find_categories_by_value(self, categories: List[NewsCategory]):
         """get category id from its enum value"""
         category_response = (
             self.db
             .table("news_categories")
             .select("id, category")
-            .in_("category", preferences)
+            .in_("category", categories)
             .execute()
         )
 

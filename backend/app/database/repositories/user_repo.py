@@ -17,7 +17,7 @@ class UserRepository(ABCRepository):
         """see class doc"""
         super().__init__(supabase_client)
 
-    def create_user_preference(self, uid: str, category_id):
+    def add_user_preference(self, uid: str, category_id):
         """adds user preference data to db"""
         response = (
             self.db

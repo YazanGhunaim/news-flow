@@ -6,14 +6,14 @@ from gotrue.errors import AuthApiError
 from starlette import status
 from supabase import Client
 
-from app.database.repositories.article_repo import ArticleRepository
+from app.database.repositories.bookmarked_article_repo import BookmarkedArticleRepository
 from app.database.repositories.news_category_repo import NewsCategoryRepository
 from app.database.repositories.user_repo import UserRepository
 from app.dependencies.auth import get_auth_headers
 from app.dependencies.supabase_client import get_supabase_client
 from app.schemas.auth_tokens import AuthTokens
 from app.schemas.news_articles import NewsCategory, ProcessedArticle
-from app.services.article_service import ArticleService
+from app.services.bookmarked_article_service import BookmarkedArticleService
 from app.services.news_category_service import NewsCategoryService
 from app.services.user_service import UserService
 from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
@@ -76,7 +76,7 @@ def get_user_bookmarks(
         auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
         uid = auth_response.session.user.id
 
-        article_service = ArticleService(ArticleRepository(supabase_client))
+        article_service = BookmarkedArticleService(BookmarkedArticleRepository(supabase_client))
         return article_service.fetch_bookmarks_for_user(uid)
     except (AuthApiError, InvalidAuthHeaderError) as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")

@@ -29,7 +29,7 @@ class UserService:
 
         category_response = self.news_category_service.fetch_categories_by_value(preferences)
         for item in category_response.data:
-            self.repo.create_user_preference(uid, item["id"])
+            self.repo.add_user_preference(uid, item["id"])
 
     def fetch_user_preferences(self, uid: str) -> List[NewsCategory]:
         """return list of user preferences"""
