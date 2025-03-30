@@ -26,7 +26,6 @@ class UserService:
 
         category id and user id
         """
-
         category_response = self.news_category_service.fetch_categories_by_value(preferences)
         for item in category_response.data:
             self.repo.add_user_preference(uid, item["id"])
@@ -34,3 +33,9 @@ class UserService:
     def fetch_user_preferences(self, uid: str) -> List[NewsCategory]:
         """return list of user preferences"""
         return self.repo.get_user_preferences(uid)
+
+    def update_user_preferences(self, uid: str, preferences: List[NewsCategory]):
+        """updates user preferences in junction table"""
+        category_response = self.news_category_service.fetch_categories_by_value(preferences)
+        category_ids = [item["id"] for item in category_response.data]
+        self.repo.update_user_preferences(uid, category_ids)

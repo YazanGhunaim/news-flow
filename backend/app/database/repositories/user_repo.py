@@ -38,3 +38,12 @@ class UserRepository(ABCRepository):
         )
 
         return [item["news_categories"]["category"] for item in response.data]
+
+    def update_user_preferences(self, uid: str, category_ids):
+        """updates user preferences"""
+        # delete previous
+        self.db.table("user_preferences").delete().eq("user_id", uid).execute()
+
+        # add new preferences
+        for category_id in category_ids:
+            self.add_user_preference(uid, category_id)

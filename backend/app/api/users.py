@@ -65,6 +65,29 @@ def get_user_preferences(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
 
 
+@router.put("/preferences", status_code=status.HTTP_204_NO_CONTENT)
+def set_user_preferences(
+        preferences: List[NewsCategory],
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client)
+):
+    """Sets user preferences"""
+    try:
+        # set user session
+        auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
+        uid = auth_response.session.user.id
+
+        user_service = UserService(
+            UserRepository(supabase_client),
+            news_category_service=NewsCategoryService(NewsCategoryRepository(supabase_client))
+        )
+        user_service.update_user_preferences(uid, preferences)
+    except (AuthApiError, InvalidAuthHeaderError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
 @router.get("/bookmarks", status_code=status.HTTP_200_OK, response_model=List[ProcessedArticle])
 def get_user_bookmarks(
         auth: AuthTokens = Depends(get_auth_headers),
