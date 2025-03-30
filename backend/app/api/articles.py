@@ -22,7 +22,7 @@ from app.schemas.auth_tokens import AuthTokens
 from app.schemas.news_articles import NewsCategory, ProcessedArticle, ProcessedNewsResponse
 from app.services.article_summary_service import ArticleSummaryService
 from app.services.bookmarked_article_service import BookmarkedArticleService
-from app.services.news_service import NewsService
+from app.services.external.news_service import NewsService
 from app.utils.article_utils import ArticleUtils
 from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 

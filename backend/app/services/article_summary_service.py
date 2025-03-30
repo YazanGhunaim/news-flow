@@ -2,7 +2,7 @@
 from app.database.models.article_summary import ArticleSummary
 from app.database.repositories.article_summary_repo import ArticleSummaryRepository
 from app.schemas.news_articles import ProcessedArticle
-from app.services.openai_service import AIClient
+from app.services.external.openai_service import AIClient
 
 
 class ArticleSummaryService:
