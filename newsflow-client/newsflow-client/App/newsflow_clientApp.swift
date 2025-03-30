@@ -11,7 +11,7 @@ import SwiftUI
 struct newsflow_clientApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreenView()
         }
     }
 }
