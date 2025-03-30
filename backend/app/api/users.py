@@ -49,6 +49,7 @@ def get_user_preferences(
         auth: AuthTokens = Depends(get_auth_headers),
         supabase_client: Client = Depends(get_supabase_client)
 ):
+    """gets user preferences"""
     try:
         # set user session
         auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
@@ -66,12 +67,12 @@ def get_user_preferences(
 
 
 @router.put("/preferences", status_code=status.HTTP_204_NO_CONTENT)
-def set_user_preferences(
+def update_user_preferences(
         preferences: List[NewsCategory],
         auth: AuthTokens = Depends(get_auth_headers),
         supabase_client: Client = Depends(get_supabase_client)
 ):
-    """Sets user preferences"""
+    """Updates user preferences"""
     try:
         # set user session
         auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
