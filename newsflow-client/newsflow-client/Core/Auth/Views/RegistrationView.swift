@@ -69,19 +69,14 @@ struct RegistrationView: View {
             .padding(32)
 
             // MARK: Sign up
-            Button {
-                // TODO: logic
+            // TODO: Routing doesnt work
+            NavigationLink {
+                PreferenceSelectionView()
             } label: {
-                Text("Sign up")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 340, height: 50)
-                    .background(formFilled ? Color.NFPrimary : Color.NFPrimary.opacity(0.5))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .padding()
+                CustomButton(disabled: formFilled, text: "Sign up") {
+                    // TODO: logic
+                }
             }
-            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
-            .disabled(!formFilled)
 
             Spacer()
 

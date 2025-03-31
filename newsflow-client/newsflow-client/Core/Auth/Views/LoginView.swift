@@ -62,19 +62,9 @@ struct LoginView: View {
                 }
 
                 // MARK: Sign in
-                Button {
+                CustomButton(disabled: formFilled, text: "Sign in") {
                     // TODO: logic
-                } label: {
-                    Text("Sign in")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(width: 340, height: 50)
-                        .background(formFilled ? Color.NFPrimary : Color.NFPrimary.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .padding()
                 }
-                .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
-                .disabled(!formFilled)
 
                 Spacer()
 
