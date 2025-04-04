@@ -11,6 +11,7 @@ struct NewsCategorySelectionGrid: View {
     @Binding var selectedIndices: [Int]
     let categories: [String]
 
+    // Fit as many columns as possible, each at least 100 points wide
     private var gridItemLayout = [GridItem(.adaptive(minimum: 100))]
 
     init(selectedIndices: Binding<[Int]>, categories: [String]) {

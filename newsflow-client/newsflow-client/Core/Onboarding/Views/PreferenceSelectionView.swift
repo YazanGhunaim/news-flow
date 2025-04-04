@@ -16,26 +16,35 @@ struct PreferenceSelectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 40) {
-            Text("Follow up on:")
-                .font(.title.bold())
-                .foregroundStyle(Color.NFPrimary)
+        VStack(spacing: 20) {
+            // MARK: Header view
+            OnboardingHeaderView(text: "say hello to your personal\nAI News Assistant")
 
-            // MARK: Selections
-            NewsCategorySelectionGrid(selectedIndices: $selectedIndices, categories: categories)
+            VStack(alignment: .leading, spacing: 32) {
+                Text("Follow up on:")
+                    .font(.title.bold())
+                    .foregroundStyle(Color.NFPrimary)
 
-            // MARK: Button
-            VStack(alignment: .center, spacing: 8) {
-                if !selectedEnough {
-                    Text("Please select at least 3 categories.")
-                        .foregroundStyle(Color.red)
+                // MARK: Selections
+                NewsCategorySelectionGrid(selectedIndices: $selectedIndices, categories: categories)
+
+                // MARK: Button
+                VStack(alignment: .center, spacing: 8) {
+                    if !selectedEnough {
+                        Text("Please select at least 3 categories.")
+                            .foregroundStyle(Color.red)
+                    }
+                    CustomButton(disabled: selectedEnough, text: "Submit") {
+                        // TODO: logic
+                    }
                 }
-                CustomButton(disabled: selectedEnough, text: "Submit") {
-                    // TODO: logic
-                }
+
+                // push stuff up
+                Spacer()
             }
+            .padding()
         }
-        .padding()
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
     }
 }

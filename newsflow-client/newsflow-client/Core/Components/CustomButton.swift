@@ -10,11 +10,11 @@ import SwiftUI
 struct CustomButton: View {
     var disabled: Bool
     let text: String
-    let logic: () -> Void
+    let action: () -> Void
 
     var body: some View {
         Button {
-            logic()
+            action()
         } label: {
             Text(text)
                 .font(.headline)

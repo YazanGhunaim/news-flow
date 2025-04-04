@@ -31,13 +31,17 @@ struct RegistrationView: View {
             // MARK: Text fields
             VStack(spacing: 40) {
                 CustomInputField(
-                    imageName: "person", placeHolderText: "Username",
-                    text: $username)
+                    imageName: "person",
+                    placeHolderText: "Username",
+                    text: $username
+                )
 
                 VStack(alignment: .trailing, spacing: 8) {
                     CustomInputField(
-                        imageName: "envelope", placeHolderText: "Email",
-                        text: $email)
+                        imageName: "envelope",
+                        placeHolderText: "Email",
+                        text: $email
+                    )
 
                     if !validEmail {
                         TextFieldTrailingInfo(text: "Invalid email format.", color: .red)
@@ -46,8 +50,10 @@ struct RegistrationView: View {
 
                 VStack(alignment: .trailing, spacing: 8) {
                     CustomInputField(
-                        imageName: "lock", placeHolderText: "Password",
-                        isSecureField: true, text: $password
+                        imageName: "lock",
+                        placeHolderText: "Password",
+                        isSecureField: true,
+                        text: $password
                     )
                     if diffPasswords {
                         TextFieldTrailingInfo(text: "Passwords do not match.", color: .red)
@@ -56,8 +62,10 @@ struct RegistrationView: View {
 
                 VStack(alignment: .trailing, spacing: 8) {
                     CustomInputField(
-                        imageName: "lock", placeHolderText: "Confirm Password",
-                        isSecureField: true, text: $confirmPassword
+                        imageName: "lock",
+                        placeHolderText: "Confirm Password",
+                        isSecureField: true,
+                        text: $confirmPassword
                     )
 
                     if diffPasswords {
@@ -73,9 +81,10 @@ struct RegistrationView: View {
             NavigationLink {
                 PreferenceSelectionView()
             } label: {
-                CustomButton(disabled: formFilled, text: "Sign up") {
-                    // TODO: logic
-                }
+//                CustomButton(disabled: formFilled, text: "Sign up") {
+//                    // TODO: logic
+//                }
+                Text("Sign Up")
             }
 
             Spacer()
