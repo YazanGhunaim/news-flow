@@ -11,16 +11,32 @@ struct RegistrationView: View {
     @Environment(AuthViewModel.self) private var viewmodel
     @Environment(Router.self) private var router
 
+    @State private var name = ""
     @State private var username = ""
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
+
     @State private var diffPasswords = false
     @State private var validEmail = true
+
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     var formFilled: Bool {
         !email.isEmpty && !password.isEmpty && !username.isEmpty && !confirmPassword.isEmpty
             && (password == confirmPassword) && validEmail
+    }
+
+    func handleError(_ error: APIError) {
+        switch error {
+        case .conflict:
+            showErrorAlert.toggle()
+            errorMessage = "Account with email or username already exists. Please try logging in instead."
+        case _:
+            showErrorAlert.toggle()
+            errorMessage = "Something went wrong please try again."
+        }
     }
 
     var body: some View {
@@ -33,29 +49,28 @@ struct RegistrationView: View {
 
             // MARK: Sign up button
             CustomButton(enabled: formFilled, text: "Sign up") {
-                router.navigate(to: .setCategoryPreferences)
+                Task {
+                    do {
+                        try await viewmodel.register(name: name, username: username, email: email, password: password)
+                        router.navigate(to: .setCategoryPreferences)
+                    } catch let error as APIError {
+                        handleError(error)
+                    }
+                }
             }
 
             Spacer()
 
             // MARK: Already have an account button
-            Button {
-                router.pop()
-            } label: {
-                HStack {
-                    Text("Already have an account?")
-                        .font(.footnote)
-
-                    Text("Sign in")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                }
-            }
-            .foregroundStyle(Color.NFPrimary)
-            .padding(.bottom, 32)
-
+            alreadyHaveAccountButton
         }
         .navigationBarBackButtonHidden()
+        .alert(
+            errorMessage, isPresented: $showErrorAlert,
+            actions: {
+                Button("Ok", role: .cancel) {}
+            }
+        )
         .onChange(of: [password, confirmPassword]) {
             withAnimation(.easeInOut) {
                 diffPasswords = password != confirmPassword
@@ -72,6 +87,12 @@ struct RegistrationView: View {
 extension RegistrationView {
     var textFields: some View {
         VStack(spacing: 40) {
+            CustomInputField(
+                imageName: "person",
+                placeHolderText: "Full name",
+                text: $name
+            )
+
             CustomInputField(
                 imageName: "person",
                 placeHolderText: "Username",
@@ -117,6 +138,23 @@ extension RegistrationView {
 
         }
         .padding(32)
+    }
+
+    var alreadyHaveAccountButton: some View {
+        Button {
+            router.pop()
+        } label: {
+            HStack {
+                Text("Already have an account?")
+                    .font(.footnote)
+
+                Text("Sign in")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+            }
+        }
+        .foregroundStyle(Color.NFPrimary)
+        .padding(.bottom, 32)
     }
 }
 

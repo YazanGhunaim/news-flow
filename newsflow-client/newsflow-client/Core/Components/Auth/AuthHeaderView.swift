@@ -12,18 +12,18 @@ struct AuthHeaderView: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            // Logo
+            // MARK: Logo
             Image("AppLogo")
                 .resizable()
                 .scaledToFit()
                 .padding(25)
-            // Info headline
+            
+            // MARK: Info headline
             Text(infoText)
                 .font(.headline)
                 .fontWeight(.semibold)
         }
-        .frame(height: 260)
-        .padding(.leading)
+        .padding()
     }
 }
 

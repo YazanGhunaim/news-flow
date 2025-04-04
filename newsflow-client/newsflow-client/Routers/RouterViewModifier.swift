@@ -20,6 +20,8 @@ struct RouterViewModifier: ViewModifier {
                 RegistrationView()
             case .setCategoryPreferences:
                 PreferenceSelectionView()
+            case .home:
+                HomeView()
             }
         }
         .environment(router)

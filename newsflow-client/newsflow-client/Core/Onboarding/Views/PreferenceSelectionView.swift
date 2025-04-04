@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct PreferenceSelectionView: View {
+    @Environment(Router.self) private var router
+
+    @State private var viewmodel = OnboardingViewModel()
     @State private var selectedIndices = [Int]()
-    let categories = ["Business", "Entertainment", "Health", "Science", "Technology", "General", "Sports"]  // TODO: backedn
+
+    @State private var showErrorAlert: Bool = false
+
+    let categories = ["business", "entertainment", "health", "science", "technology", "general", "sports"]  // TODO: backedn
 
     var selectedEnough: Bool {
         selectedIndices.count >= 3
+    }
+
+    var selectedCategories: [String] {
+        selectedIndices.compactMap { index in
+            categories[index]
+        }
     }
 
     var body: some View {
@@ -35,7 +47,14 @@ struct PreferenceSelectionView: View {
                             .foregroundStyle(Color.red)
                     }
                     CustomButton(enabled: selectedEnough, text: "Submit") {
-                        // TODO: logic
+                        Task {
+                            do {
+                                try await viewmodel.setCategoryPreferences(categories: selectedCategories)
+                                router.navigate(to: .home)
+                            } catch {
+                                showErrorAlert.toggle()
+                            }
+                        }
                     }
                 }
 
@@ -46,6 +65,9 @@ struct PreferenceSelectionView: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
+        .alert("Error occurred, please try again", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        }
     }
 }
 
