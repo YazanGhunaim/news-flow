@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct newsflow_clientApp: App {
+    @State private var authViewModel = AuthViewModel()
+
     var body: some Scene {
         WindowGroup {
             SplashScreenView()
+                .withRouter()
+                .environment(authViewModel)
         }
     }
 }
