@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct RegistrationView: View {
-    @Environment(\.dismiss) var dismiss
     @Environment(AuthViewModel.self) private var viewmodel
+    @Environment(Router.self) private var router
 
     @State private var username = ""
     @State private var email = ""
@@ -29,69 +29,18 @@ struct RegistrationView: View {
             AuthHeaderView(infoText: "Create your account")
 
             // MARK: Text fields
-            VStack(spacing: 40) {
-                CustomInputField(
-                    imageName: "person",
-                    placeHolderText: "Username",
-                    text: $username
-                )
+            textFields
 
-                VStack(alignment: .trailing, spacing: 8) {
-                    CustomInputField(
-                        imageName: "envelope",
-                        placeHolderText: "Email",
-                        text: $email
-                    )
-
-                    if !validEmail {
-                        TextFieldTrailingInfo(text: "Invalid email format.", color: .red)
-                    }
-                }
-
-                VStack(alignment: .trailing, spacing: 8) {
-                    CustomInputField(
-                        imageName: "lock",
-                        placeHolderText: "Password",
-                        isSecureField: true,
-                        text: $password
-                    )
-                    if diffPasswords {
-                        TextFieldTrailingInfo(text: "Passwords do not match.", color: .red)
-                    }
-                }
-
-                VStack(alignment: .trailing, spacing: 8) {
-                    CustomInputField(
-                        imageName: "lock",
-                        placeHolderText: "Confirm Password",
-                        isSecureField: true,
-                        text: $confirmPassword
-                    )
-
-                    if diffPasswords {
-                        TextFieldTrailingInfo(text: "Passwords do not match.", color: .red)
-                    }
-                }
-
-            }
-            .padding(32)
-
-            // MARK: Sign up
-            // TODO: Routing doesnt work
-            NavigationLink {
-                PreferenceSelectionView()
-            } label: {
-//                CustomButton(disabled: formFilled, text: "Sign up") {
-//                    // TODO: logic
-//                }
-                Text("Sign Up")
+            // MARK: Sign up button
+            CustomButton(enabled: formFilled, text: "Sign up") {
+                router.navigate(to: .setCategoryPreferences)
             }
 
             Spacer()
 
-            // MARK: Already have an account
+            // MARK: Already have an account button
             Button {
-                dismiss()
+                router.pop()
             } label: {
                 HStack {
                     Text("Already have an account?")
@@ -106,7 +55,7 @@ struct RegistrationView: View {
             .padding(.bottom, 32)
 
         }
-        .ignoresSafeArea()
+        .navigationBarBackButtonHidden()
         .onChange(of: [password, confirmPassword]) {
             withAnimation(.easeInOut) {
                 diffPasswords = password != confirmPassword
@@ -117,6 +66,57 @@ struct RegistrationView: View {
                 validEmail = viewmodel.isValidEmail(email)
             }
         }
+    }
+}
+
+extension RegistrationView {
+    var textFields: some View {
+        VStack(spacing: 40) {
+            CustomInputField(
+                imageName: "person",
+                placeHolderText: "Username",
+                text: $username
+            )
+
+            VStack(alignment: .trailing, spacing: 8) {
+                CustomInputField(
+                    imageName: "envelope",
+                    placeHolderText: "Email",
+                    text: $email
+                )
+
+                if !validEmail {
+                    TextFieldTrailingInfo(text: "Invalid email format.", color: .red)
+                }
+            }
+
+            VStack(alignment: .trailing, spacing: 8) {
+                CustomInputField(
+                    imageName: "lock",
+                    placeHolderText: "Password",
+                    isSecureField: true,
+                    text: $password
+                )
+                if diffPasswords {
+                    TextFieldTrailingInfo(text: "Passwords do not match.", color: .red)
+                }
+            }
+
+            VStack(alignment: .trailing, spacing: 8) {
+                CustomInputField(
+                    imageName: "lock",
+                    placeHolderText: "Confirm Password",
+                    isSecureField: true,
+                    text: $confirmPassword
+                )
+
+                if diffPasswords {
+                    TextFieldTrailingInfo(text: "Passwords do not match.", color: .red)
+                }
+            }
+
+        }
+        .padding(32)
     }
 }
 

@@ -18,7 +18,7 @@ struct PreferenceSelectionView: View {
     var body: some View {
         VStack(spacing: 20) {
             // MARK: Header view
-            OnboardingHeaderView(text: "say hello to your personal\nAI News Assistant")
+            OnboardingHeaderView(text: "Say Hello To Your Personal\nAI News Assistant")
 
             VStack(alignment: .leading, spacing: 32) {
                 Text("Follow up on:")
@@ -34,7 +34,7 @@ struct PreferenceSelectionView: View {
                         Text("Please select at least 3 categories.")
                             .foregroundStyle(Color.red)
                     }
-                    CustomButton(disabled: selectedEnough, text: "Submit") {
+                    CustomButton(enabled: selectedEnough, text: "Submit") {
                         // TODO: logic
                     }
                 }

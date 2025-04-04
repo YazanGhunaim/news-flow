@@ -14,6 +14,7 @@ struct newsflow_clientApp: App {
     var body: some Scene {
         WindowGroup {
             SplashScreenView()
+                .withRouter()
                 .environment(authViewModel)
         }
     }

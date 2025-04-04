@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-// MARK Color from hex code
+// MARK: Color from hex code
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

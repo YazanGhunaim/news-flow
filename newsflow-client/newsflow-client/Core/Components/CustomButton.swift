@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CustomButton: View {
-    var disabled: Bool
+    var enabled: Bool
     let text: String
     let action: () -> Void
 
@@ -20,17 +20,17 @@ struct CustomButton: View {
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(width: 340, height: 50)
-                .background(disabled ? Color.NFPrimary : Color.NFPrimary.opacity(0.5))
+                .background(enabled ? Color.NFPrimary : Color.NFPrimary.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .padding()
         }
         .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
-        .disabled(!disabled)
+        .disabled(!enabled)
     }
 }
 
 #Preview {
-    CustomButton(disabled: false, text: "Submit") {
+    CustomButton(enabled: false, text: "Submit") {
         print("Submitted")
     }
 }
