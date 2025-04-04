@@ -26,6 +26,7 @@ struct CustomInputField: View {
                     SecureField(placeHolderText, text: $text)
                 } else {
                     TextField(placeHolderText, text: $text)
+                        .textInputAutocapitalization(.never)
                 }
             }
 
