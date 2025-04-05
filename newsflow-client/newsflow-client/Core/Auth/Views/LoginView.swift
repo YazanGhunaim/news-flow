@@ -49,7 +49,7 @@ struct LoginView: View {
                 Task {
                     do {
                         try await viewmodel.login(email: email, password: password)
-                        router.navigate(to: .home)
+                        router.navigate(to: .tabView)
                     } catch let error as APIError {
                         handleError(error)
                     }

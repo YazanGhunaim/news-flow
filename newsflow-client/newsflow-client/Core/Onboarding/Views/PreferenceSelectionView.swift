@@ -50,7 +50,7 @@ struct PreferenceSelectionView: View {
                         Task {
                             do {
                                 try await viewmodel.setCategoryPreferences(categories: selectedCategories)
-                                router.navigate(to: .home)
+                                router.navigate(to: .tabView)
                             } catch {
                                 showErrorAlert.toggle()
                             }

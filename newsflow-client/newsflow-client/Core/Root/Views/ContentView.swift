@@ -17,7 +17,7 @@ struct ContentView: View {
             case .loggedOut:
                 LoginView()
             case .loggedIn:
-                HomeView()
+                TabBarView()
             default:
                 ProgressView()
             }
