@@ -23,10 +23,10 @@ class KeychainManager {
     // save and update token
     func saveToken(_ token: String, forKey key: KeychainKey) -> Bool {
         if (try? keychainService.set(token, forKey: key.rawValue)) != nil {
-            print("Saved token to keychain successfully!")
+            NFLogger.shared.logger.info("Saved token to keychain successfully!")
             return true
         }
-        print("Error saving token to keychain!")
+        NFLogger.shared.logger.error("Error saving token to keychain!")
         return false
     }
 
@@ -41,20 +41,20 @@ class KeychainManager {
     // delete token
     func deleteToken(forKey key: KeychainKey) -> Bool {
         if (try? keychainService.deleteItem(forKey: key.rawValue)) != nil {
-            print("Successfully deleted token from keychain!")
+            NFLogger.shared.logger.info("Successfully deleted token from keychain!")
             return true
         }
-        print("Error deleting token from keychain!")
+        NFLogger.shared.logger.error("Error deleting token from keychain!")
         return false
     }
 
     // delete all
     func deleteAllTokens() -> Bool {
         if (try? keychainService.deleteAll()) != nil {
-            print("Successfully deleted all tokens from keychain!")
+            NFLogger.shared.logger.info("Successfully deleted all tokens from keychain!")
             return true
         }
-        print("Error deleting all tokens from keychain!")
+        NFLogger.shared.logger.error("Error deleting all tokens from keychain!")
         return false
     }
 

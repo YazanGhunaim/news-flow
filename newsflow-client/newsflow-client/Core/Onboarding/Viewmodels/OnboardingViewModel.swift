@@ -17,8 +17,9 @@ class OnboardingViewModel {
 
         switch response {
         case .success:
-            print("Successfully set category preferences.")
+            NFLogger.shared.logger.info("Successfully set category preferences.")
         case .failure(let error):
+            NFLogger.shared.logger.error("Failed to set category preferences: \(error)")
             throw error
         }
     }

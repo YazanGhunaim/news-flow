@@ -21,14 +21,19 @@ class AuthViewModel {
 
     // MARK: - Auth requests
     private func setUserState() async {
+        NFLogger.shared.logger.debug("Setting user state")
         // check if auth tokens exist
         if KeychainManager.shared.authTokensExist() {
+            NFLogger.shared.logger.debug("User tokens exist")
             if (try? await refreshUserState()) != nil {
+                NFLogger.shared.logger.debug("Setting user state to logged in")
                 userState = .loggedIn
             } else {
+                NFLogger.shared.logger.debug("Setting user state to logged out")
                 userState = .loggedOut
             }
         } else {
+            NFLogger.shared.logger.debug("Setting user state to logged out")
             userState = .loggedOut
         }
     }

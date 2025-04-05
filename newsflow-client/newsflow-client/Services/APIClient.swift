@@ -27,15 +27,12 @@ enum APIError: Error {
 }
 
 final class APILogger: EventMonitor {
-    let queue = DispatchQueue(label: "com.newsflow_client.apilogger")
-
     func requestDidFinish(_ request: Request) {
-        print("➡️ Request: \(request.description)")
-        print("➡️ Request: \(String(describing: request.request?.allHTTPHeaderFields!.values))")
+        NFLogger.shared.logger.debug("➡️ Request: \(request.description)")
     }
 
     func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
-        print("⬅️ Response: \(response.description)")
+        NFLogger.shared.logger.debug("⬅️ Response: \(response.description)")
     }
 }
 
