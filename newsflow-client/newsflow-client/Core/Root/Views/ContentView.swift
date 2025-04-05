@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(AuthViewModel.self) private var authVM
+    @Environment(Router.self) private var router
+
     var body: some View {
-        LoginView()
+        Group {
+            switch authVM.userState {
+            case .loggedOut:
+                LoginView()
+            case .loggedIn:
+                HomeView()
+            default:
+                ProgressView()
+            }
+        }
     }
 }
 

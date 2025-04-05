@@ -31,6 +31,7 @@ final class APILogger: EventMonitor {
 
     func requestDidFinish(_ request: Request) {
         print("➡️ Request: \(request.description)")
+        print("➡️ Request: \(String(describing: request.request?.allHTTPHeaderFields!.values))")
     }
 
     func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
@@ -49,9 +50,13 @@ final class AuthInterceptor: RequestInterceptor {
         _ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
         var request = urlRequest
-        if let token = getToken() {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.setValue("", forHTTPHeaderField: "refresh-token")
+        if let accToken = getToken() {
+            request.setValue("Bearer \(accToken)", forHTTPHeaderField: "Authorization")
+
+            // add empty refresh-token value if not passed
+            if request.value(forHTTPHeaderField: "refresh-token") == nil {
+                request.setValue("", forHTTPHeaderField: "refresh-token")
+            }
         }
         completion(.success(request))
     }
@@ -65,7 +70,7 @@ class APIClient {
 
     private init() {
         let interceptor = AuthInterceptor {
-            UserDefaults.standard.string(forKey: "accessToken")
+            KeychainManager.shared.getToken(forKey: .userAccessToken)
         }
         let logger = APILogger()
         self.session = Session(interceptor: interceptor, eventMonitors: [logger])
@@ -74,8 +79,9 @@ class APIClient {
     func request<T: Decodable, B: Encodable>(
         url: String,
         method: HTTPMethod = .get,
-        body: B? = nil,
-        headers: HTTPHeaders? = nil
+        body: B? = nil as EmptyEntity?,
+        headers: HTTPHeaders? = nil,
+        withRefreshToken: Bool = false
     ) async -> Result<T, APIError> {
         guard let url = URL(string: url) else {
             return .failure(.invalidURL)
@@ -84,6 +90,14 @@ class APIClient {
         do {
             var urlRequest = try URLRequest(url: url, method: method, headers: headers)
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            // add refresh-token header on request
+            if withRefreshToken {
+                urlRequest.setValue(
+                    KeychainManager.shared.getToken(forKey: .userRefreshToken)!,
+                    forHTTPHeaderField: "refresh-token"
+                )
+            }
 
             if let body = body {
                 let jsonData = try JSONEncoder().encode(body)
