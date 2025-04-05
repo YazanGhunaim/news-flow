@@ -1,7 +1,7 @@
 """user auth related endpoints"""
 from fastapi import APIRouter, Depends, HTTPException
 from gotrue import AuthResponse, UserResponse
-from gotrue.errors import AuthApiError, AuthInvalidCredentialsError
+from gotrue.errors import AuthApiError, AuthInvalidCredentialsError, AuthSessionMissingError
 from starlette import status
 from supabase import Client
 
@@ -126,3 +126,27 @@ def delete_user(
         supabase_client.auth.admin.delete_user(uid)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+
+
+@router.post("/set_session", response_model=AuthResponse, status_code=status.HTTP_200_OK, responses={
+    status.HTTP_200_OK: {"description": "Token validation successful."},
+    status.HTTP_400_BAD_REQUEST: {"description": "Token validation failed."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "Invalid or expired tokens."}
+})
+def set_user_session(
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client=Depends(get_supabase_client)
+):
+    """validates user auth tokens, used to check if user should stay logged in
+
+    :param auth: user auth tokens
+    :param supabase_client: supabase client
+    :return: AuthResponse object ( in case of refreshed tokens )
+    """
+    try:
+        auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
+        return auth_response
+    except (AuthSessionMissingError, AuthApiError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Session retrieval failed: {e}")

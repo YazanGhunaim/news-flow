@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		EAB7F2EE2DA01A2900CE40FB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = EAB7F2ED2DA01A2900CE40FB /* Kingfisher */; };
 		EAB7F2F12DA01A9000CE40FB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EAB7F2F02DA01A9000CE40FB /* Alamofire */; };
+		EAB7F3EB2DA19D0300CE40FB /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = EAB7F3EA2DA19D0300CE40FB /* SimpleKeychain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAB7F3EB2DA19D0300CE40FB /* SimpleKeychain in Frameworks */,
 				EAB7F2EE2DA01A2900CE40FB /* Kingfisher in Frameworks */,
 				EAB7F2F12DA01A9000CE40FB /* Alamofire in Frameworks */,
 			);
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				EAB7F2ED2DA01A2900CE40FB /* Kingfisher */,
 				EAB7F2F02DA01A9000CE40FB /* Alamofire */,
+				EAB7F3EA2DA19D0300CE40FB /* SimpleKeychain */,
 			);
 			productName = "newsflow-client";
 			productReference = EA34B9B22D99B631002C48CD /* newsflow-client.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				EAB7F2EC2DA01A2900CE40FB /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				EAB7F2EF2DA01A9000CE40FB /* XCRemoteSwiftPackageReference "Alamofire" */,
+				EAB7F3E92DA19D0300CE40FB /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EA34B9B32D99B631002C48CD /* Products */;
@@ -380,6 +384,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		EAB7F3E92DA19D0300CE40FB /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -392,6 +404,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EAB7F2EF2DA01A9000CE40FB /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		EAB7F3EA2DA19D0300CE40FB /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EAB7F3E92DA19D0300CE40FB /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

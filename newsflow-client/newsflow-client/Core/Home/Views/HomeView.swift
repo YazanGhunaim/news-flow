@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct HomeView: View {
+    var tokens: [String]?
+
+    init() {
+        tokens = KeychainManager.shared.getAllTokens()
+    }
+
     var body: some View {
-        Text("Hello, World!")
-            .navigationBarBackButtonHidden(true)
+        VStack {
+            ForEach(tokens ?? [], id: \.self) { token in
+                Text(token)
+            }
+        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
