@@ -79,7 +79,7 @@ extension HomeView {
     }
 
     var NewsArticlesScrollView: some View {
-        ScrollView(showsIndicators: false) {
+        Group {
             switch homeFiltersVM.selectedFilter.title {
             case "trending":
                 TrendingArticles
@@ -90,29 +90,33 @@ extension HomeView {
     }
 
     var TrendingArticles: some View {
-        LazyVStack {
-            ForEach(viewmodel.trendingArticles) { article in
-                VStack {
-                    ArticleCell(article: article)
+        ScrollView(showsIndicators: false) {
+            LazyVStack {
+                ForEach(viewmodel.trendingArticles) { article in
+                    VStack {
+                        ArticleCell(article: article)
 
-                    Divider()
+                        Divider()
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 4)
             }
         }
     }
 
     var KeywordArticles: some View {
-        LazyVStack {
-            ForEach(viewmodel.articles) { article in
-                VStack {
-                    ArticleCell(article: article)
+        ScrollView(showsIndicators: false) {
+            LazyVStack {
+                ForEach(viewmodel.articles) { article in
+                    VStack {
+                        ArticleCell(article: article)
 
-                    Divider()
+                        Divider()
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 4)
             }
         }
     }

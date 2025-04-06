@@ -40,7 +40,7 @@ class AuthViewModel {
 
     private func refreshUserState() async throws {
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: "http://127.0.0.1:8000/users/set_session", method: .post,
+            url: EndpointManager.shared.getEndpointURL(for: .setUserSession), method: .post,
             withRefreshToken: true
         )
 
@@ -56,7 +56,7 @@ class AuthViewModel {
         let loginRequest: UserLoginRequest = .init(email: email, password: password)
 
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: "http://127.0.0.1:8000/users/sign_in", method: .post, body: loginRequest
+            url: EndpointManager.shared.getEndpointURL(for: .signIn), method: .post, body: loginRequest
         )
 
         switch response {
@@ -73,7 +73,7 @@ class AuthViewModel {
         )
 
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: "http://127.0.0.1:8000/users/sign_up", method: .post, body: userRegRequest
+            url: EndpointManager.shared.getEndpointURL(for: .signUp), method: .post, body: userRegRequest
         )
 
         switch response {

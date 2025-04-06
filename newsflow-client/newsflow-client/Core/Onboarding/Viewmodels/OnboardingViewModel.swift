@@ -18,7 +18,7 @@ class OnboardingViewModel {
 
     func getCategories() async -> [String] {
         let response: Result<[String], APIError> = await APIClient.shared.request(
-            url: "http://127.0.0.1:8000/preferences/categories", method: .get
+            url: EndpointManager.shared.getEndpointURL(for: .getArticleCategories), method: .get
         )
 
         switch response {
@@ -32,7 +32,7 @@ class OnboardingViewModel {
 
     func setCategoryPreferences(categories: [String]) async throws {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: "http://127.0.0.1:8000/users/preferences", method: .post, body: categories
+            url: EndpointManager.shared.getEndpointURL(for: .userPreferences), method: .post, body: categories
         )
 
         switch response {

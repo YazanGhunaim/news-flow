@@ -16,7 +16,7 @@ class HomeViewModel {
     private var cachedArticles = [String: [Article]]()  // in mem cache
 
     init() {
-        Task { self.trendingArticles = await getTrendingArticles() }
+        Task { await setTrendingArticles() }
     }
 
     func getArticlesforCategory(_ category: String) async {
@@ -30,9 +30,10 @@ class HomeViewModel {
         cachedArticles[category] = self.articles
     }
 
-    private func getTrendingArticles() async -> [Article] {
+    func setTrendingArticles() async {
         let params = ["page_size": "20"]
-        let url = APIClient.shared.buildURL(base: "http://127.0.0.1:8000/articles/top-headlines", queryParams: params)
+        let url = APIClient.shared.buildURL(
+            base: EndpointManager.shared.getEndpointURL(for: .topHeadlines), queryParams: params)
 
         let response: Result<NewsResponse, APIError> = await APIClient.shared.request(
             url: url!, method: .get
@@ -40,16 +41,17 @@ class HomeViewModel {
 
         switch response {
         case .success(let newsResponse):
-            return newsResponse.articles
+            self.trendingArticles = newsResponse.articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
-            return []
+            self.trendingArticles = []
         }
     }
 
     private func getArticleForKeyword(_ keyword: String) async -> [Article] {
         let params = ["page_size": "20", "keyword": keyword]
-        let url = APIClient.shared.buildURL(base: "http://127.0.0.1:8000/articles/everything", queryParams: params)
+        let url = APIClient.shared.buildURL(
+            base: EndpointManager.shared.getEndpointURL(for: .everyArticle), queryParams: params)
 
         NFLogger.shared.logger.debug("Fetching articles for keyword: \(keyword)")
         let response: Result<NewsResponse, APIError> = await APIClient.shared.request(
