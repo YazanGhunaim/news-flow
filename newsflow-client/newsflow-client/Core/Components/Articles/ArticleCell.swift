@@ -12,10 +12,11 @@ struct ArticleCell: View {
     let article: Article
 
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .top, spacing: 16) {
+            // MARK: Article Image
             KFImage(URL(string: article.imageUrl!))
                 .placeholder {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 125, height: 125)
                 }
@@ -23,15 +24,15 @@ struct ArticleCell: View {
                 .scaledToFill()
                 .frame(width: 125, height: 125)
                 .cornerRadius(8)
-            
-            Spacer()
-            
+
+            // MARK: Article metadata
             VStack(alignment: .leading) {
                 Text(article.source.name)
-                
+
                 Spacer()
-                
+
                 Text(article.title)
+                    .lineLimit(2)
                     .font(.headline)
 
                 Spacer()
@@ -40,6 +41,8 @@ struct ArticleCell: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+
+            Spacer()
         }
         .frame(height: 125)
     }

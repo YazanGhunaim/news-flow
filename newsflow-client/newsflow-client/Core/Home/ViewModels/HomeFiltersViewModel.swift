@@ -23,7 +23,7 @@ class HomeFiltersViewModel {
     }
 
     func loadUserCategoryPreferences() {
-        var saved = UserDefaults.standard.stringArray(forKey: "user_article_category_preferences") ?? []
+        var saved = UserDefaultsManager.shared.getStringArray(forKey: .userArticleCategoryPreferences) ?? []
 
         // every user should get trending tab at beginning
         saved.insert("trending", at: 0)

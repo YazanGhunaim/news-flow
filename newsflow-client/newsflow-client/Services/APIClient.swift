@@ -31,9 +31,9 @@ final class APILogger: EventMonitor {
         NFLogger.shared.logger.debug("➡️ Request: \(request.description)")
     }
 
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
-        NFLogger.shared.logger.debug("⬅️ Response: \(response.description)")
-    }
+    //    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
+    //        NFLogger.shared.logger.debug("⬅️ Response: \(response.description)")
+    //    }
 }
 
 final class AuthInterceptor: RequestInterceptor {

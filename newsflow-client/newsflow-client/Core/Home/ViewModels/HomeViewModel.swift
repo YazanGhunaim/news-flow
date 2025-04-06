@@ -13,12 +13,21 @@ class HomeViewModel {
     var trendingArticles = [Article]()
     var articles = [Article]()
 
+    private var cachedArticles = [String: [Article]]()  // in mem cache
+
     init() {
         Task { self.trendingArticles = await getTrendingArticles() }
     }
 
     func getArticlesforCategory(_ category: String) async {
+        // check cache
+        if let cached = cachedArticles[category] {
+            self.articles = cached
+            return
+        }
+
         self.articles = await getArticleForKeyword(category)
+        cachedArticles[category] = self.articles
     }
 
     private func getTrendingArticles() async -> [Article] {

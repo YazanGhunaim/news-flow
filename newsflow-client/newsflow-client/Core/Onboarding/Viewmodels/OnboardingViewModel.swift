@@ -39,7 +39,7 @@ class OnboardingViewModel {
         case .success:
             NFLogger.shared.logger.info("Successfully set category preferences.")
             // save preferences locally
-            UserDefaults.standard.set(categories, forKey: "user_article_category_preferences")
+            UserDefaultsManager.shared.setStringArray(value: categories, forKey: .userArticleCategoryPreferences)
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to set category preferences: \(error)")
             throw error

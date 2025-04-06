@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct HomeView: View {
-    // TODO: get from api
     @State private var viewmodel = HomeViewModel()
     @State private var homeFiltersVM = HomeFiltersViewModel()
 
@@ -23,13 +22,12 @@ struct HomeView: View {
                 Spacer()
 
                 // MARK: News Articles
-                // TODO: Display based on selected filter
                 NewsArticlesScrollView
             }
             .toolbar { ToolbarItem(placement: .topBarLeading) { navBarTitle } }
             .onChange(of: homeFiltersVM.selectedFilter) { oldValue, newValue in
-                guard newValue.title != "trending" else { return } // Dont fetch trending categories... already handled seperately
-                
+                guard newValue.title != "trending" else { return }  // Dont fetch trending categories... already handled seperately
+
                 viewmodel.articles.removeAll()
                 Task { await viewmodel.getArticlesforCategory(newValue.title) }
             }
