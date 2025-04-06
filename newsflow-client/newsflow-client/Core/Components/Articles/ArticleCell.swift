@@ -12,8 +12,8 @@ struct ArticleCell: View {
     let article: Article
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            KFImage(URL(string: article.imageURL))
+        HStack(alignment: .top) {
+            KFImage(URL(string: article.imageUrl!))
                 .placeholder {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.gray.opacity(0.2))
@@ -23,9 +23,11 @@ struct ArticleCell: View {
                 .scaledToFill()
                 .frame(width: 125, height: 125)
                 .cornerRadius(8)
-
+            
+            Spacer()
+            
             VStack(alignment: .leading) {
-                Text(article.category)
+                Text(article.source.name)
                 
                 Spacer()
                 
@@ -43,11 +45,11 @@ struct ArticleCell: View {
     }
 }
 
-#Preview {
-    ArticleCell(
-        article: Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        )
-    )
-}
+//#Preview {
+//    ArticleCell(
+//        article: Article(
+//            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
+//            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
+//        )
+//    )
+//}

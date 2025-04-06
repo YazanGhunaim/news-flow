@@ -7,12 +7,49 @@
 
 import Foundation
 
-// TODO: Actual model
-let categories = ["Business", "Technology", "Health", "Entertainment", "Sports"]
-struct Article: Identifiable {
-    let id = UUID()
-    let imageURL: String
+struct NewsResponse: Codable {
+    let totalResults: Int
+    let articles: [Article]
+
+    enum CodingKeys: String, CodingKey {
+        case totalResults = "total_results"
+        case articles
+    }
+}
+
+struct Source: Codable {
+    let id: String?
+    let name: String
+}
+
+struct Article: Codable, Identifiable {
+    var id = UUID()
+
+    let source: Source
+    let author: String?
     let title: String
-    let date: Date = Date()
-    let category: String = categories.randomElement()!
+    let description: String
+    let url: String
+    let imageUrl: String?
+    let content: String
+
+    // Store date as a string initially
+    let dateString: String
+
+    var date: Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return formatter.date(from: dateString)!
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case imageUrl = "image_url"
+        case source
+        case author
+        case title
+        case description
+        case url
+        case dateString = "date"
+        case content
+    }
 }

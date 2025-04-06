@@ -18,7 +18,7 @@ struct ArticleCard: View {
 
     var body: some View {
         ZStack {
-            KFImage(URL(string: card.imageURL))
+            KFImage(URL(string: card.imageUrl!))
                 .resizable()
                 .scaledToFill()
                 .frame(width: 300, height: 400)

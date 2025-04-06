@@ -34,7 +34,7 @@ router = APIRouter(prefix="/articles", tags=["News Articles"])
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving top headlines."},
 }, response_model=ProcessedNewsResponse)
 def get_top_headlines(
-        keyword: str = None, sources: str = None, category: NewsCategory = None, page: int = None,
+        keyword: str = None, sources: str = None, category: NewsCategory = NewsCategory.GENERAL, page: int = None,
         page_size: int = None, language: str = "en",
         news_service: NewsService = Depends(get_news_service),
 ):

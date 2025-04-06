@@ -5,5 +5,9 @@ VALUES
     ('general'),
     ('health'),
     ('science'),
+    ('crypto'),
+    ('AI'),
+    ('politics'),
+    ('gaming'),
     ('sports'),
     ('technology');

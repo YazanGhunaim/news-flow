@@ -7,29 +7,27 @@
 
 import Foundation
 
-// TODO: Get from user preferences
-enum HomeFiltersViewModel: Int, CaseIterable {
-    case trending
-    case technology
-    case entertainment
-    case health
-    case science
-    case sports
+struct HomeFilter: Identifiable, Equatable {
+    let id = UUID()
+    let title: String
+}
 
-    var title: String {
-        switch self {
-        case .trending:
-            return "Trending"
-        case .technology:
-            return "Technology"
-        case .entertainment:
-            return "Entertainment"
-        case .health:
-            return "Health"
-        case .science:
-            return "Science"
-        case .sports:
-            return "Sports"
-        }
+@Observable
+@MainActor
+class HomeFiltersViewModel {
+    var filters = [HomeFilter]()
+    var selectedFilter: HomeFilter = .init(title: "trending")
+
+    init() {
+        loadUserCategoryPreferences()
+    }
+
+    func loadUserCategoryPreferences() {
+        var saved = UserDefaults.standard.stringArray(forKey: "user_article_category_preferences") ?? []
+
+        // every user should get trending tab at beginning
+        saved.insert("trending", at: 0)
+
+        self.filters = saved.map { HomeFilter(title: $0) }
     }
 }

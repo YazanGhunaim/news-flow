@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from app.api import articles, users, users_auth
+from app.api import articles, preferences, users, users_auth
 
 # configuring logger
 logging.basicConfig(
@@ -22,6 +22,7 @@ app = FastAPI()
 app.include_router(articles.router)
 app.include_router(users_auth.router)
 app.include_router(users.router)
+app.include_router(preferences.router)
 
 
 @app.get("/")

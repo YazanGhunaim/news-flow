@@ -15,15 +15,13 @@ struct PreferenceSelectionView: View {
 
     @State private var showErrorAlert: Bool = false
 
-    let categories = ["business", "entertainment", "health", "science", "technology", "general", "sports"]  // TODO: backedn
-
     var selectedEnough: Bool {
         selectedIndices.count >= 3
     }
 
     var selectedCategories: [String] {
         selectedIndices.compactMap { index in
-            categories[index]
+            viewmodel.categories[index]
         }
     }
 
@@ -38,9 +36,9 @@ struct PreferenceSelectionView: View {
                     .foregroundStyle(Color.NFPrimary)
 
                 // MARK: Selections
-                NewsCategorySelectionGrid(selectedIndices: $selectedIndices, categories: categories)
+                NewsCategorySelectionGrid(selectedIndices: $selectedIndices, categories: viewmodel.categories)
 
-                // MARK: Button
+                // MARK: Submit Button
                 VStack(alignment: .center, spacing: 8) {
                     if !selectedEnough {
                         Text("Please select at least 3 categories.")

@@ -15,6 +15,11 @@ class NewsCategory(str, Enum):
     SCIENCE = "science"
     SPORTS = "sports"
     TECHNOLOGY = "technology"
+    # custom
+    AI = "AI"
+    CRYPTO = "crypto"
+    GAMING = "gaming"
+    POLITICS = "politics"
 
 
 class Source(BaseModel):

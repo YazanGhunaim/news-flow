@@ -9,37 +9,8 @@ import SwiftUI
 
 struct HomeView: View {
     // TODO: get from api
-    let articles: [Article] = [
-        Article(
-            imageURL: "https://cdn.mlbtraderumors.com/files/2025/03/USATSI_22887705-1024x683.jpg",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://cdn.mlbtraderumors.com/files/2025/03/USATSI_22887705-1024x683.jpg",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-        Article(
-            imageURL: "https://variety.com/wp-content/uploads/2025/03/GettyImages-2204767080.jpg?w=1000",
-            title: "Breaking News: SwiftUI Makes Beautiful UIs Easy"
-        ),
-    ]
-    @State private var selectedFilter: HomeFiltersViewModel = .trending
+    @State private var viewmodel = HomeViewModel()
+    @State private var homeFiltersVM = HomeFiltersViewModel()
 
     @Namespace private var animation
 
@@ -56,6 +27,12 @@ struct HomeView: View {
                 NewsArticlesScrollView
             }
             .toolbar { ToolbarItem(placement: .topBarLeading) { navBarTitle } }
+            .onChange(of: homeFiltersVM.selectedFilter) { oldValue, newValue in
+                guard newValue.title != "trending" else { return } // Dont fetch trending categories... already handled seperately
+                
+                viewmodel.articles.removeAll()
+                Task { await viewmodel.getArticlesforCategory(newValue.title) }
+            }
         }
     }
 }
@@ -75,12 +52,12 @@ extension HomeView {
     var categoryFilterScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
-                ForEach(HomeFiltersViewModel.allCases, id: \.rawValue) { item in
+                ForEach(homeFiltersVM.filters) { filter in
                     VStack {
-                        Text(item.title)
+                        Text(filter.title)
                             .font(.subheadline)
 
-                        if selectedFilter == item {
+                        if homeFiltersVM.selectedFilter.title == filter.title {
                             Capsule()
                                 .foregroundStyle(Color.NFPrimary)
                                 .frame(height: 3)
@@ -89,10 +66,10 @@ extension HomeView {
                     }
                     .onTapGesture {
                         withAnimation(.easeInOut) {
-                            selectedFilter = item
+                            homeFiltersVM.selectedFilter = filter
                         }
                     }
-                    .containerRelativeFrame(.horizontal, count: 4, spacing: 4)
+                    .containerRelativeFrame(.horizontal, count: 3, spacing: 2)
                 }
             }
 
@@ -105,15 +82,39 @@ extension HomeView {
 
     var NewsArticlesScrollView: some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack {
-                ForEach(articles) { article in
-                    VStack {
-                        ArticleCell(article: article)
+            switch homeFiltersVM.selectedFilter.title {
+            case "trending":
+                TrendingArticles
+            default:
+                KeywordArticles
+            }
+        }
+    }
 
-                        Divider()
-                    }
-                    .padding(.vertical, 4)
+    var TrendingArticles: some View {
+        LazyVStack {
+            ForEach(viewmodel.trendingArticles) { article in
+                VStack {
+                    ArticleCell(article: article)
+
+                    Divider()
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+            }
+        }
+    }
+
+    var KeywordArticles: some View {
+        LazyVStack {
+            ForEach(viewmodel.articles) { article in
+                VStack {
+                    ArticleCell(article: article)
+
+                    Divider()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 4)
             }
         }
     }
