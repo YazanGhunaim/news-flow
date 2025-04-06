@@ -8,7 +8,7 @@
 import Foundation
 
 class EndpointManager {
-    let baseURL = "127.0.0.1:8000"
+    let baseURL = "192.168.0.107:8000"
 
     static let shared = EndpointManager()
 

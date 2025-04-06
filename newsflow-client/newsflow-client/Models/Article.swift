@@ -37,8 +37,7 @@ struct Article: Codable, Identifiable {
     let dateString: String
 
     var date: Date {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let formatter = ISO8601DateFormatter()
         return formatter.date(from: dateString)!
     }
 
