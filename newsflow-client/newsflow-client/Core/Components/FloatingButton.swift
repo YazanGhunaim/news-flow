@@ -16,22 +16,22 @@ struct FloatingButton: View {
 
     var body: some View {
         Circle()
-            .fill(Color.gray)
+            .fill(.ultraThinMaterial)
             .stroke(.primary, lineWidth: 0.5)
             .frame(width: size, height: size)
-            .shadow(color: Color.NFPrimary, radius: 8)
+            .shadow(color: Color.NFPrimary, radius: 10, x: 0, y: 5)
             .overlay {
                 Image(systemName: image)
                     .scaleEffect(scale)
             }
             .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.5)) {
+                withAnimation(.easeInOut(duration: 0.75)) {
                     self.size = 100
                     self.scale = 2
                 }
                 // Animate back after time delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation(.easeInOut(duration: 0.75)) {
                         self.size = 75
                         self.scale = 1.5
                     }

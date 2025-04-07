@@ -9,7 +9,13 @@ import Kingfisher
 import SwiftUI
 
 struct ArticleView: View {
+    @State private var viewmodel: ArticleViewModel
     let article: Article
+
+    init(article: Article) {
+        self.article = article
+        _viewmodel = State(initialValue: ArticleViewModel(content: article.content))
+    }
 
     var body: some View {
         ScrollView {
@@ -17,9 +23,7 @@ struct ArticleView: View {
                 // MARK: Article Image
                 KFImage(URL(string: article.imageUrl ?? ""))
                     .resizable()
-                    .placeholder {
-                        ProgressView()
-                    }
+                    .placeholder { ProgressView() }
                     .scaledToFill()
                     .frame(height: 200)
                     .cornerRadius(12)
@@ -58,6 +62,10 @@ struct ArticleView: View {
             }
             .padding()
         }
+        .overlay(
+            alignment: .bottom,
+            content: { FloatingButton(image: "airpods.max") { viewmodel.readContent() } }
+        )
         .navigationTitle(article.source.name)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -78,4 +86,5 @@ struct ArticleView: View {
     return NavigationStack {
         ArticleView(article: mockArticle)
     }
+    .preferredColorScheme(.light)
 }
