@@ -14,6 +14,7 @@ class UserDefaultsManager {
 
     enum UserDefaultsKeys: String {
         case userArticleCategoryPreferences = "user_article_category_preferences"
+        case userBookmarkUrls = "user_article_bookmarks_urls"
     }
 
     private init() {}

@@ -9,10 +9,17 @@ import Kingfisher
 import SwiftUI
 
 struct ArticleView: View {
-    @State private var viewmodel = ArticleViewModel()
+    @State private var viewmodel: ArticleViewModel
     @State private var isSummarizing: Bool = false
 
     let article: Article
+
+    init(article: Article, isSummarizing: Bool = false) {
+        self.article = article
+        self.isSummarizing = isSummarizing
+
+        _viewmodel = State(initialValue: ArticleViewModel(article: article))
+    }
 
     var body: some View {
         ZStack {
@@ -63,9 +70,6 @@ struct ArticleView: View {
             }
             .overlay(alignment: .bottom, content: { playbackButtons })
             .onDisappear { viewmodel.stopReading() }  // stop TTS when user gets out of article view
-            .navigationTitle(article.source.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(isSummarizing)  // disable dismissing if summarizing
 
             // MARK: - Dim
             if isSummarizing {
@@ -74,6 +78,10 @@ struct ArticleView: View {
                     .transition(.opacity)
             }
         }
+        .navigationTitle(article.source.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(isSummarizing)  // disable dismissing if summarizing
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { bookmarkButton } }
         .animation(.easeInOut, value: isSummarizing)  // Whenever the value of isSummarizing changes animate all views that depend on it
         .animation(.easeInOut, value: viewmodel.isSpeaking)
         .animation(.easeInOut, value: viewmodel.isPaused)
@@ -81,6 +89,14 @@ struct ArticleView: View {
 }
 
 extension ArticleView {
+    var bookmarkButton: some View {
+        Button {
+            Task { await viewmodel.bookmarkArticle() }
+        } label: {
+            Image(systemName: viewmodel.articleIsBookmarked ? "bookmark.fill" : "bookmark")
+        }
+    }
+
     var playbackButtons: some View {
         HStack(alignment: .center, spacing: 24) {
             // MARK: Main TTS button
@@ -91,7 +107,7 @@ extension ArticleView {
 
                 isSummarizing = true
                 Task {
-                    let summary = await viewmodel.summarizeArticle(article)
+                    let summary = await viewmodel.summarizeArticle()
                     isSummarizing = false
                     viewmodel.read(text: summary)
                 }
