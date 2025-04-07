@@ -61,19 +61,7 @@ struct ArticleView: View {
                 }
                 .padding()
             }
-            .overlay(
-                alignment: .bottom,
-                content: {
-                    FloatingButton(isAnimating: $isSummarizing, image: "airpods.max") {
-                        isSummarizing = true
-                        Task {
-                            let summary = await viewmodel.summarizeArticle(article)
-                            isSummarizing = false
-                            viewmodel.read(text: summary)
-                        }
-                    }
-                }
-            )
+            .overlay(alignment: .bottom, content: { playbackButtons })
             .onDisappear { viewmodel.stopReading() }  // stop TTS when user gets out of article view
             .navigationTitle(article.source.name)
             .navigationBarTitleDisplayMode(.inline)
@@ -81,15 +69,54 @@ struct ArticleView: View {
 
             // MARK: - Dim
             if isSummarizing {
-                Color.black.opacity(0.3)
+                Color.NFPrimary.opacity(0.3)
                     .edgesIgnoringSafeArea(.all)
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut, value: isSummarizing)  // Whenever the value of isSummarizing changes animate all views that depend on it
+        .animation(.easeInOut, value: viewmodel.isSpeaking)
+        .animation(.easeInOut, value: viewmodel.isPaused)
     }
 }
 
+extension ArticleView {
+    var playbackButtons: some View {
+        HStack(alignment: .center, spacing: 24) {
+            // MARK: Main TTS button
+            FloatingButton(
+                isAnimating: $isSummarizing, isDisabled: $viewmodel.isSpeaking, image: "airpods.max"
+            ) {
+                guard !isSummarizing && !viewmodel.isSpeaking else { return }
+
+                isSummarizing = true
+                Task {
+                    let summary = await viewmodel.summarizeArticle(article)
+                    isSummarizing = false
+                    viewmodel.read(text: summary)
+                }
+            }
+            .opacity(viewmodel.isSpeaking ? 0.5 : 1)
+
+            // MARK: Pause / Resume
+            if viewmodel.isSpeaking || viewmodel.isPaused {
+                FloatingButton(
+                    isAnimating: .constant(false), isDisabled: .constant(false),
+                    image: viewmodel.isSpeaking ? "pause.fill" : "play.fill",
+                    color: viewmodel.isSpeaking ? .red : .green
+                ) {
+                    if viewmodel.isPaused {
+                        viewmodel.resumeReading()
+                    } else {
+                        viewmodel.pauseReading()
+                    }
+                }
+            }
+
+        }
+        .padding(.horizontal, 20)
+    }
+}
 #Preview {
     let mockArticle = Article(
         source: Source(name: "TechCrunch"),

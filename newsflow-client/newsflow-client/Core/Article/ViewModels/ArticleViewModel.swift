@@ -14,6 +14,7 @@ class ArticleViewModel {
 
     var errorMessage: String?
     var isSpeaking: Bool = false
+    var isPaused: Bool = false
 
     func summarizeArticle(_ article: Article) async -> String {
         let response: Result<ArticleSummary, APIError> = await APIClient.shared.request(
@@ -46,6 +47,30 @@ class ArticleViewModel {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func pauseReading() {
+        guard isSpeaking else { return }
+        NFLogger.shared.logger.info("Paused reading...")
+
+        defer {
+            isPaused = true
+            isSpeaking = false
+        }
+
+        textToSpeechService.pauseSpeaking()
+    }
+
+    func resumeReading() {
+        guard isPaused else { return }
+        NFLogger.shared.logger.info("Resume reading...")
+
+        defer {
+            isPaused = false
+            isSpeaking = true
+        }
+
+        textToSpeechService.resumeSpeaking()
     }
 
     func stopReading() {

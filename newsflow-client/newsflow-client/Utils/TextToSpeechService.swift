@@ -43,6 +43,7 @@ class TextToSpeechService: NSObject, AVSpeechSynthesizerDelegate {
             let defaultLanguage = Locale.current.language.languageCode?.identifier ?? "en-US"
             utterance.voice = AVSpeechSynthesisVoice(language: defaultLanguage)
         }
+        utterance.rate = 0.4  // bit slower pace than default (0.5)
 
         if currentUtterance != nil, synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
@@ -55,6 +56,18 @@ class TextToSpeechService: NSObject, AVSpeechSynthesizerDelegate {
         }
 
         synthesizer.speak(utterance)
+    }
+
+    func pauseSpeaking() {
+        if synthesizer.isSpeaking {
+            synthesizer.pauseSpeaking(at: .immediate)
+        }
+    }
+
+    func resumeSpeaking() {
+        if synthesizer.isPaused {
+            synthesizer.continueSpeaking()
+        }
     }
 
     func stopSpeaking() throws {
@@ -79,7 +92,7 @@ class TextToSpeechService: NSObject, AVSpeechSynthesizerDelegate {
         do {
             try onFinishSpeaking?()
         } catch {
-            print("Error during onFinishSpeaking: \(error)")
+            NFLogger.shared.logger.error("Error during onFinishSpeaking: \(error)")
         }
     }
 }
