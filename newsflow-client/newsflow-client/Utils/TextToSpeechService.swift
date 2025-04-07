@@ -73,4 +73,13 @@ class TextToSpeechService: NSObject, AVSpeechSynthesizerDelegate {
             throw TextToSpeechError.audioSessionDeactivationFailed(error)
         }
     }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        // Call the onFinishSpeaking closure when speech finishes
+        do {
+            try onFinishSpeaking?()
+        } catch {
+            print("Error during onFinishSpeaking: \(error)")
+        }
+    }
 }

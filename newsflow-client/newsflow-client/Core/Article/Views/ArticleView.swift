@@ -9,71 +9,90 @@ import Kingfisher
 import SwiftUI
 
 struct ArticleView: View {
-    @State private var viewmodel: ArticleViewModel
+    @State private var viewmodel = ArticleViewModel()
+    @State private var isSummarizing: Bool = false
+
     let article: Article
 
-    init(article: Article) {
-        self.article = article
-        _viewmodel = State(initialValue: ArticleViewModel(content: article.content))
-    }
-
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                // MARK: Article Image
-                KFImage(URL(string: article.imageUrl ?? ""))
-                    .resizable()
-                    .placeholder { ProgressView() }
-                    .scaledToFill()
-                    .frame(height: 200)
-                    .cornerRadius(12)
+        ZStack {
+            // MARK: - ScrollView
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    // MARK: Article Image
+                    KFImage(URL(string: article.imageUrl ?? ""))
+                        .resizable()
+                        .placeholder { ProgressView() }
+                        .scaledToFill()
+                        .frame(height: 200)
+                        .cornerRadius(12)
 
-                // MARK: Title
-                Text(article.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    // MARK: Title
+                    Text(article.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
 
-                // MARK: Source and Date
-                HStack {
-                    if let author = article.author {
-                        Text("By \(author)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    // MARK: Source and Date
+                    HStack {
+                        if let author = article.author {
+                            Text("By \(author)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Text(article.date?.formattedDateString() ?? "Unknown")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
                     }
 
-                    Spacer()
+                    Divider()
 
-                    Text(article.date?.formattedDateString() ?? "Unknown")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
+                    // MARK: Description
+                    Text(article.description)
+                        .font(.body)
+                        .foregroundColor(.primary)
+
+                    // MARK: Full Content
+                    Text(article.content)
+                        .font(.body)
+                        .foregroundColor(.primary)
                 }
-
-                Divider()
-
-                // MARK: Description
-                Text(article.description)
-                    .font(.body)
-                    .foregroundColor(.primary)
-
-                // MARK: Full Content
-                Text(article.content)
-                    .font(.body)
-                    .foregroundColor(.primary)
+                .padding()
             }
-            .padding()
+            .overlay(
+                alignment: .bottom,
+                content: {
+                    FloatingButton(isAnimating: $isSummarizing, image: "airpods.max") {
+                        isSummarizing = true
+                        Task {
+                            let summary = await viewmodel.summarizeArticle(article)
+                            isSummarizing = false
+                            viewmodel.read(text: summary)
+                        }
+                    }
+                }
+            )
+            .onDisappear { viewmodel.stopReading() }  // stop TTS when user gets out of article view
+            .navigationTitle(article.source.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(isSummarizing)  // disable dismissing if summarizing
+
+            // MARK: - Dim
+            if isSummarizing {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .transition(.opacity)
+            }
         }
-        .overlay(
-            alignment: .bottom,
-            content: { FloatingButton(image: "airpods.max") { viewmodel.readContent() } }
-        )
-        .navigationTitle(article.source.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .animation(.easeInOut, value: isSummarizing)  // Whenever the value of isSummarizing changes animate all views that depend on it
     }
 }
 
 #Preview {
     let mockArticle = Article(
-        source: Source(id: "techcrunch", name: "TechCrunch"),
+        source: Source(name: "TechCrunch"),
         author: "Jane Doe",
         title: "SwiftUI Just Got Better!",
         description: "Apple has announced amazing improvements in SwiftUI at WWDC...",

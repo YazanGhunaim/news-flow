@@ -30,7 +30,8 @@ class ArticleSummaryService:
         summary = ai_client.summarize_article_content(article)
 
         article_summary = ArticleSummary(article_url=article.url, summary=summary)
-        return self.repo.add_article_summary(article_summary), True
+        self.repo.add_article_summary(article_summary)
+        return article_summary, True
 
     def delete_summary(self, article_url: str):
         """deletes summary of an article"""

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct FloatingButton: View {
-    @State private var size: CGFloat = 75
-    @State private var scale: CGFloat = 1.5
+    @Binding var isAnimating: Bool
+    @State private var animate = false
 
     let image: String
     let action: () -> Void
@@ -18,31 +18,45 @@ struct FloatingButton: View {
         Circle()
             .fill(.ultraThinMaterial)
             .stroke(.primary, lineWidth: 0.5)
-            .frame(width: size, height: size)
+            .frame(width: animate ? 100 : 75, height: animate ? 100 : 75)
             .shadow(color: Color.NFPrimary, radius: 10, x: 0, y: 5)
             .overlay {
                 Image(systemName: image)
-                    .scaleEffect(scale)
+                    .scaleEffect(animate ? 2 : 1.5)
+            }
+            .onAppear {
+                if isAnimating {
+                    startPulsing()
+                }
+            }
+            .onChange(of: isAnimating) {
+                print($1)
+                if $1 {
+                    startPulsing()
+                } else {
+                    stopPulsing()
+                }
             }
             .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.75)) {
-                    self.size = 100
-                    self.scale = 2
-                }
-                // Animate back after time delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    withAnimation(.easeInOut(duration: 0.75)) {
-                        self.size = 75
-                        self.scale = 1.5
-                    }
-                }
                 action()
             }
+    }
+
+    private func startPulsing() {
+        withAnimation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
+            animate = true
+        }
+    }
+
+    private func stopPulsing() {
+        withAnimation {
+            animate = false
+        }
     }
 }
 
 #Preview {
-    FloatingButton(image: "airpods.max") {
+    FloatingButton(isAnimating: .constant(true), image: "airpods.max") {
         print("You pressed me!")
     }
     .preferredColorScheme(.light)

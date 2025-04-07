@@ -10,26 +10,38 @@ import Foundation
 @MainActor
 @Observable
 class ArticleViewModel {
-    let articleContent: String
     let textToSpeechService = TextToSpeechService()
 
     var errorMessage: String?
     var isSpeaking: Bool = false
 
-    init(content: String) {
-        self.articleContent = content
+    func summarizeArticle(_ article: Article) async -> String {
+        let response: Result<ArticleSummary, APIError> = await APIClient.shared.request(
+            url: EndpointManager.shared.getEndpointURL(for: .summarizeArticle), method: .post, body: article,
+        )
+
+        switch response {
+        case .success(let article):
+            NFLogger.shared.logger.info("Retrieved summary for \(article.url)")
+            return article.summary
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to retrieve summary for \(article.url): \(error)")
+            return ""
+        }
     }
 
-    func readContent() {
+    // MARK: - TTS
+    func read(text: String) {
         isSpeaking = true
-
-        defer { isSpeaking = false }
+        NFLogger.shared.logger.info("Reading article content...")
 
         do {
             try textToSpeechService.speak(
-                text: articleContent, withVoice: "com.apple.ttsbundle.siri_male_en-US_compact"
+                text: text,
+                withVoice: "com.apple.ttsbundle.siri_male_en-US_compact"
             ) {
-                NFLogger.shared.logger.info("Reading article content complete.")
+                NFLogger.shared.logger.info("Reading article content complete...")
+                self.isSpeaking = false
             }
         } catch {
             errorMessage = error.localizedDescription

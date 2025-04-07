@@ -25,7 +25,7 @@ class NewsCategory(str, Enum):
 class Source(BaseModel):
     """Source Model"""
 
-    id: Optional[str]
+    # id: Optional[str]
     name: str
 
 

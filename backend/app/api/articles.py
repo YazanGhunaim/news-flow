@@ -120,7 +120,7 @@ def summarize_article(
         article_summary, is_new = article_service.create_article_summary(article)
 
         return JSONResponse(
-            article_summary,
+            article_summary.model_dump(),
             status_code=status.HTTP_201_CREATED if is_new else status.HTTP_200_OK
         )
     except (AuthApiError, InvalidAuthHeaderError) as e:

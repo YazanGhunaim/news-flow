@@ -27,7 +27,8 @@ class ArticleSummaryRepository(ABCRepository):
             .execute()
         )
 
-        return response.data
+        if response.data:
+            return ArticleSummary(article_url=response.data[0]["article_url"], summary=response.data[0]["summary"])
 
     def delete_summary_by_url(self, article_url: str):
         """deletes article_summary by url"""

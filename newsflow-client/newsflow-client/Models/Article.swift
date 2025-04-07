@@ -18,7 +18,6 @@ struct NewsResponse: Codable {
 }
 
 struct Source: Codable, Hashable {
-    let id: String?
     let name: String
 }
 
@@ -32,7 +31,7 @@ struct Article: Codable, Identifiable, Hashable {
     let url: String
     let imageUrl: String?
     let content: String
-    
+
     let dateString: String
     var date: Date? {
         dateString.toDate()
@@ -47,5 +46,17 @@ struct Article: Codable, Identifiable, Hashable {
         case url
         case dateString = "date"
         case content
+    }
+}
+
+struct ArticleSummary: Codable, Identifiable {
+    var id = UUID()
+
+    let url: String
+    let summary: String
+    
+    enum CodingKeys: String, CodingKey {
+        case url = "article_url"
+        case summary
     }
 }
