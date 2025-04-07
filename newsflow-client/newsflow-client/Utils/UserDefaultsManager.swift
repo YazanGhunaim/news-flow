@@ -12,7 +12,7 @@ class UserDefaultsManager {
 
     static let shared = UserDefaultsManager()
 
-    enum UserDefaultsKeys: String {
+    enum UserDefaultsKeys: String, CaseIterable {
         case userArticleCategoryPreferences = "user_article_category_preferences"
         case userBookmarkUrls = "user_article_bookmarks_urls"
     }
@@ -25,5 +25,16 @@ class UserDefaultsManager {
 
     func getStringArray(forKey key: UserDefaultsKeys) -> [String]? {
         return defualts.stringArray(forKey: key.rawValue)
+    }
+
+    func delete(forKey key: UserDefaultsKeys) {
+        NFLogger.shared.logger.debug("Deleting \(key.rawValue) from UserDefaults")
+        defualts.removeObject(forKey: key.rawValue)
+    }
+
+    func deleteAll() {
+        for key in UserDefaultsKeys.allCases {
+            defualts.removeObject(forKey: key.rawValue)
+        }
     }
 }

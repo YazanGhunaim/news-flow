@@ -28,7 +28,7 @@ class HomeViewModel {
                 continue
             }
 
-            //            articles[category] = try? await getArticleForKeyword(category) ?? []
+            articles[category] = try? await getArticleForKeyword(category) ?? []
         }
     }
 
