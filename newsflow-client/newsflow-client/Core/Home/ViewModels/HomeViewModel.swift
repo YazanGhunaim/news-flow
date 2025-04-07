@@ -11,47 +11,28 @@ import Foundation
 @MainActor
 class HomeViewModel {
     var trendingArticles = [Article]()
-    var articles = [Article]()
+    var articles = [String: [Article]]()
+
     var isLoading = false
-    var error: String?
-    var isEmpty = false
 
-    private var cachedArticles = [String: [Article]]()  // in mem cache
+    init(categories: [String]) { Task { await getArticles(forCategories: categories) } }
 
-    init() {
-        Task { await setTrendingArticles() }
+    func getArticles(forCategories categories: [String]) async {
+        isLoading = true
+
+        defer { isLoading = false }
+
+        for category in categories {
+            guard category != "trending" else {
+                await getTrendingArticles()
+                continue
+            }
+
+            articles[category] = try? await getArticleForKeyword(category) ?? []
+        }
     }
 
-    func getArticlesforCategory(_ category: String) async {
-        isLoading = true
-        error = nil
-        isEmpty = false
-
-        // check cache
-        if let cached = cachedArticles[category] {
-            self.articles = cached
-            self.isEmpty = cached.isEmpty
-            isLoading = false
-            return
-        }
-
-        do {
-            self.articles = try await getArticleForKeyword(category)
-            self.isEmpty = articles.isEmpty
-            cachedArticles[category] = self.articles
-        } catch {
-            self.error = error.localizedDescription
-            self.articles = []
-        }
-
-        isLoading = false
-    }
-
-    func setTrendingArticles() async {
-        isLoading = true
-        error = nil
-        isEmpty = false
-
+    private func getTrendingArticles() async {
         let params = ["page_size": "20"]
         let url = APIClient.shared.buildURL(
             base: EndpointManager.shared.getEndpointURL(for: .topHeadlines), queryParams: params)
@@ -63,17 +44,13 @@ class HomeViewModel {
         switch response {
         case .success(let newsResponse):
             self.trendingArticles = newsResponse.articles
-            self.isEmpty = newsResponse.articles.isEmpty
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
-            self.error = error.localizedDescription
             self.trendingArticles = []
         }
-
-        isLoading = false
     }
 
-    private func getArticleForKeyword(_ keyword: String) async throws -> [Article] {
+    private func getArticleForKeyword(_ keyword: String) async throws -> [Article]? {
         let params = ["page_size": "20", "keyword": keyword]
         let url = APIClient.shared.buildURL(
             base: EndpointManager.shared.getEndpointURL(for: .everyArticle), queryParams: params)

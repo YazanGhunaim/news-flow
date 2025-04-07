@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var viewmodel = HomeViewModel()
     @State private var homeFiltersVM = HomeFiltersViewModel()
+    @State private var viewmodel = HomeViewModel(categories: [])
 
     @Environment(Router.self) private var router
 
@@ -26,30 +26,16 @@ struct HomeView: View {
                 // MARK: News Articles
                 if viewmodel.isLoading {
                     loadingView
-                } else if let error = viewmodel.error {
-                    errorView(error)
-                } else if viewmodel.isEmpty {
-                    emptyStateView
                 } else {
                     NewsArticlesScrollView
                 }
+
             }
             .toolbar { ToolbarItem(placement: .topBarLeading) { navBarTitle } }
-            .onChange(of: homeFiltersVM.selectedFilter) { oldValue, newValue in
-                handleFilterChange(from: oldValue, to: newValue)
-            }
         }
-    }
-
-    // MARK: - Private Methods
-    private func handleFilterChange(from oldValue: HomeFilter, to newValue: HomeFilter) {
-        guard newValue.title != "trending" else { return }
-
-        viewmodel.articles.removeAll()
-        Task { await viewmodel.getArticlesforCategory(newValue.title) }
+        .onAppear { viewmodel = HomeViewModel(categories: homeFiltersVM.filters.map { $0.title }) }
     }
 }
-
 extension HomeView {
     var navBarTitle: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -104,59 +90,6 @@ extension HomeView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    func errorView(_ error: String) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.red)
-
-            Text("Oops! Something went wrong")
-                .font(.headline)
-
-            Text(error)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-
-            Button(action: {
-                Task {
-                    if homeFiltersVM.selectedFilter.title == "trending" {
-                        await viewmodel.setTrendingArticles()
-                    } else {
-                        await viewmodel.getArticlesforCategory(homeFiltersVM.selectedFilter.title)
-                    }
-                }
-            }) {
-                Text("Try Again")
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(Color.NFPrimary)
-                    .cornerRadius(8)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "newspaper")
-                .font(.system(size: 50))
-                .foregroundColor(.gray)
-
-            Text("No Articles Found")
-                .font(.headline)
-
-            Text("We couldn't find any articles for this category. Try selecting a different category.")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
     var NewsArticlesScrollView: some View {
         Group {
             switch homeFiltersVM.selectedFilter.title {
@@ -188,7 +121,7 @@ extension HomeView {
     var KeywordArticles: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack {
-                ForEach(viewmodel.articles) { article in
+                ForEach(viewmodel.articles[homeFiltersVM.selectedFilter.title] ?? []) { article in
                     VStack {
                         ArticleCell(article: article)
                             .onTapGesture { router.navigate(to: .articleView(article: article)) }
