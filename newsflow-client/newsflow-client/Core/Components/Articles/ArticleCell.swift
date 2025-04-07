@@ -14,7 +14,7 @@ struct ArticleCell: View {
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             // MARK: Article Image
-            KFImage(URL(string: article.imageUrl!))
+            KFImage(URL(string: article.imageUrl ?? ""))
                 .placeholder {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.gray.opacity(0.2))
@@ -37,9 +37,11 @@ struct ArticleCell: View {
 
                 Spacer()
 
-                Text(article.date, style: .date)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                if let date = article.date {
+                    Text(date, style: .date)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer()

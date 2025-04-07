@@ -13,6 +13,7 @@ enum Route: Hashable {
     case register
     case setCategoryPreferences
     case tabView
+    case articleView(article: Article)
 }
 
 @Observable
@@ -30,6 +31,8 @@ class Router {
             path.append(Route.setCategoryPreferences)
         case .tabView:
             path.append(Route.tabView)
+        case .articleView(let article):
+            path.append(Route.articleView(article: article))
         }
     }
 

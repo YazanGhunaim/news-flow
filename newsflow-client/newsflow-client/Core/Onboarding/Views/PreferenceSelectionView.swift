@@ -16,7 +16,7 @@ struct PreferenceSelectionView: View {
     @State private var showErrorAlert: Bool = false
 
     var selectedEnough: Bool {
-        selectedIndices.count >= 3
+        selectedIndices.count >= 3 && selectedIndices.count <= 5
     }
 
     var selectedCategories: [String] {
@@ -41,7 +41,7 @@ struct PreferenceSelectionView: View {
                 // MARK: Submit Button
                 VStack(alignment: .center, spacing: 8) {
                     if !selectedEnough {
-                        Text("Please select at least 3 categories.")
+                        Text("Please select between 3 and 5 categories.")
                             .foregroundStyle(Color.red)
                     }
                     CustomButton(enabled: selectedEnough, text: "Submit") {

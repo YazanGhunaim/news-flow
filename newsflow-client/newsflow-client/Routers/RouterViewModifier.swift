@@ -22,6 +22,8 @@ struct RouterViewModifier: ViewModifier {
                 PreferenceSelectionView()
             case .tabView:
                 TabBarView()
+            case .articleView(let article):
+                ArticleView(article: article)
             }
         }
         .environment(router)
@@ -35,5 +37,6 @@ struct RouterViewModifier: ViewModifier {
                     routeView(for: route)
                 }
         }
+        .tint(Color.NFPrimary)
     }
 }

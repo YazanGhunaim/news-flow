@@ -22,7 +22,6 @@ struct TabBarView: View {
                 Text("Profile view")
             }
         }
-        .tint(Color.NFPrimary)
         .navigationBarBackButtonHidden(true)
     }
 }

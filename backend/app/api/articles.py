@@ -29,6 +29,7 @@ from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 router = APIRouter(prefix="/articles", tags=["News Articles"])
 
 
+# TODO: separate news category model for custom keywords
 @router.get("/top-headlines", status_code=status.HTTP_200_OK, responses={
     status.HTTP_200_OK: {"description": "Successfully retrieved top headlines."},
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving top headlines."},

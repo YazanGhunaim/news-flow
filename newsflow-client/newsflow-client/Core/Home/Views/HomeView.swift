@@ -10,6 +10,9 @@ import SwiftUI
 struct HomeView: View {
     @State private var viewmodel = HomeViewModel()
     @State private var homeFiltersVM = HomeFiltersViewModel()
+
+    @Environment(Router.self) private var router
+
     @Namespace private var animation
 
     var body: some View {
@@ -171,9 +174,7 @@ extension HomeView {
                 ForEach(viewmodel.trendingArticles) { article in
                     VStack {
                         ArticleCell(article: article)
-                            .onTapGesture {
-                                // TODO: Navigate to article detail
-                            }
+                            .onTapGesture { router.navigate(to: .articleView(article: article)) }
 
                         Divider()
                     }
@@ -190,9 +191,7 @@ extension HomeView {
                 ForEach(viewmodel.articles) { article in
                     VStack {
                         ArticleCell(article: article)
-                            .onTapGesture {
-                                // TODO: Navigate to article detail
-                            }
+                            .onTapGesture { router.navigate(to: .articleView(article: article)) }
 
                         Divider()
                     }

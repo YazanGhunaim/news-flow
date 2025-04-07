@@ -17,12 +17,12 @@ struct NewsResponse: Codable {
     }
 }
 
-struct Source: Codable {
+struct Source: Codable, Hashable {
     let id: String?
     let name: String
 }
 
-struct Article: Codable, Identifiable {
+struct Article: Codable, Identifiable, Hashable {
     var id = UUID()
 
     let source: Source
@@ -32,13 +32,10 @@ struct Article: Codable, Identifiable {
     let url: String
     let imageUrl: String?
     let content: String
-
-    // Store date as a string initially
+    
     let dateString: String
-
-    var date: Date {
-        let formatter = ISO8601DateFormatter()
-        return formatter.date(from: dateString)!
+    var date: Date? {
+        dateString.toDate()
     }
 
     enum CodingKeys: String, CodingKey {
