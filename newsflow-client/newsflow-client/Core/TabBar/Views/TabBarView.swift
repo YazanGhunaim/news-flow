@@ -11,7 +11,7 @@ struct TabBarView: View {
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house.fill") {
-                HomeView()
+                HomeView(homeFiltersVM: HomeFiltersViewModel())
             }
 
             Tab("Flow", systemImage: "newspaper.fill") {

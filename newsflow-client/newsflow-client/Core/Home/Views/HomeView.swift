@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var homeFiltersVM = HomeFiltersViewModel()
-    @State private var viewmodel = HomeViewModel(categories: [])
+    @State private var viewmodel: HomeViewModel
+    @State private var homeFiltersVM: HomeFiltersViewModel
 
     @Environment(Router.self) private var router
-
     @Namespace private var animation
+
+    init(homeFiltersVM: HomeFiltersViewModel) {
+        let filters = homeFiltersVM.filters.map { $0.title }
+        _homeFiltersVM = State(initialValue: homeFiltersVM)
+        _viewmodel = State(initialValue: HomeViewModel(categories: filters))
+    }
 
     var body: some View {
         NavigationView {
@@ -33,7 +38,6 @@ struct HomeView: View {
             }
             .toolbar { ToolbarItem(placement: .topBarLeading) { navBarTitle } }
         }
-        .onAppear { viewmodel = HomeViewModel(categories: homeFiltersVM.filters.map { $0.title }) }
     }
 }
 extension HomeView {
@@ -137,5 +141,5 @@ extension HomeView {
 }
 
 #Preview {
-    HomeView()
+    HomeView(homeFiltersVM: HomeFiltersViewModel())
 }
