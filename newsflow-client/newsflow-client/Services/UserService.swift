@@ -33,7 +33,7 @@ class UserService {
         case .success:
             NFLogger.shared.logger.info("Successfully updated category preferences.")
             // update preferences locally
-            UserDefaultsManager.shared.updateStringArray(value: categories, forKey: .userArticleCategoryPreferences)
+            UserDefaultsManager.shared.setStringArray(value: categories, forKey: .userArticleCategoryPreferences)
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to set category preferences: \(error)")
             throw error
