@@ -92,7 +92,11 @@ struct ArticleView: View {
 extension ArticleView {
     var bookmarkButton: some View {
         Button {
-            Task { await viewmodel.bookmarkArticle() }
+            if viewmodel.articleIsBookmarked {
+                Task { await viewmodel.unbookmarkArticle() }
+            } else {
+                Task { await viewmodel.bookmarkArticle() }
+            }
         } label: {
             Image(systemName: viewmodel.articleIsBookmarked ? "bookmark.fill" : "bookmark")
         }
@@ -105,8 +109,8 @@ extension ArticleView {
                 isAnimating: $isSummarizing, isDisabled: $viewmodel.isSpeaking, image: "airpods.max"
             ) {
                 guard !isSummarizing && !viewmodel.isSpeaking else { return }
-
                 isSummarizing = true
+
                 Task {
                     let summary = await viewmodel.summarizeArticle()
                     isSummarizing = false

@@ -55,6 +55,7 @@ struct ProfileView: View {
                 }
             }
             .padding()
+            .task { await viewmodel.fetchBookmarks() }
             .navigationTitle("\(viewmodel.user?.name ?? "Profile")")
         }
     }

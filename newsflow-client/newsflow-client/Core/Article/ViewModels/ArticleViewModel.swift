@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: Remove bookmark
 @MainActor
 @Observable
 class ArticleViewModel {
@@ -40,8 +39,19 @@ class ArticleViewModel {
             bookmarked_urls += [article.url]
         }
 
-        NFLogger.shared.logger.info("Added article \(self.article.url) to bookmarked user defaults")
         UserDefaultsManager.shared.setStringArray(value: bookmarked_urls, forKey: .userBookmarkUrls)
+        NFLogger.shared.logger.debug("Added article \(self.article.url) to bookmarked user defaults")
+    }
+
+    private func removeBookmarkedArticleFromUserDefaults() {
+        var bookmarked_urls = UserDefaultsManager.shared.getStringArray(forKey: .userBookmarkUrls) ?? []
+
+        guard let index = bookmarked_urls.firstIndex(of: article.url) else { return }
+        bookmarked_urls.remove(at: index)
+
+        UserDefaultsManager.shared.setStringArray(value: bookmarked_urls, forKey: .userBookmarkUrls)
+        NFLogger.shared.logger.debug("Removed article \(self.article.url) from bookmarked user defaults")
+
     }
 
     // MARK: Article operation
@@ -57,6 +67,22 @@ class ArticleViewModel {
             articleIsBookmarked = true
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to bookmark article \(self.article.url): \(error)")
+        }
+    }
+
+    func unbookmarkArticle() async {
+        let params = ["article_url": article.url]
+        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
+            url: EndpointManager.shared.url(for: .bookmarkArticle, parameters: params), method: .delete
+        )
+
+        switch response {
+        case .success(_):
+            removeBookmarkedArticleFromUserDefaults()
+            articleIsBookmarked = false
+            NFLogger.shared.logger.info("Successfully unbookmarked article \(self.article.url)")
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to unbookmark article \(self.article.url): \(error)")
         }
     }
 
@@ -78,14 +104,14 @@ class ArticleViewModel {
     // MARK: - TTS
     func read(text: String) {
         isSpeaking = true
-        NFLogger.shared.logger.info("Reading article content...")
+        NFLogger.shared.logger.debug("Reading article content...")
 
         do {
             try textToSpeechService.speak(
                 text: text,
                 withVoice: "com.apple.ttsbundle.siri_male_en-US_compact"
             ) {
-                NFLogger.shared.logger.info("Reading article content complete...")
+                NFLogger.shared.logger.debug("Reading article content complete...")
                 self.isSpeaking = false
             }
         } catch {
@@ -95,7 +121,7 @@ class ArticleViewModel {
 
     func pauseReading() {
         guard isSpeaking else { return }
-        NFLogger.shared.logger.info("Paused reading...")
+        NFLogger.shared.logger.debug("Paused reading...")
 
         defer {
             isPaused = true
@@ -107,7 +133,7 @@ class ArticleViewModel {
 
     func resumeReading() {
         guard isPaused else { return }
-        NFLogger.shared.logger.info("Resume reading...")
+        NFLogger.shared.logger.debug("Resume reading...")
 
         defer {
             isPaused = false

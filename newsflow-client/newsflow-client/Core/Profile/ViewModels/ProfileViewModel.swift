@@ -19,12 +19,12 @@ class ProfileViewModel {
         self.userService = userService
 
         Task {
-            self.user = await fetchUser()
-            self.bookmarks = await userService.getUserBookmarks()
+            await fetchUser()
+            await fetchBookmarks()
         }
     }
 
-    func fetchUser() async -> User? { return await userService.getUser() }
+    func fetchUser() async { user = await userService.getUser() }
 
-    func fetchBookmarks() async -> [Article]? { return await userService.getUserBookmarks() }
+    func fetchBookmarks() async { bookmarks = await userService.getUserBookmarks() }
 }
