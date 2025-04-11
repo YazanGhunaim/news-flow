@@ -21,6 +21,10 @@ class BookmarkedArticleService:
         bookmarked_article = BookmarkedArticle(user_id=uid, **article.model_dump())
         return self.repo.add_bookmarked_article(bookmarked_article)
 
+    def unbookmark_article(self, article_url: str, uid: str):
+        """removes an article from bookmarks to specific user"""
+        return self.repo.delete_bookmarked_article(article_url, uid)
+
     def fetch_bookmarks_for_user(self, uid: str) -> List[ProcessedArticle]:
         """gets bookmarked articles for uid"""
         return self.repo.get_bookmarks_for_user(uid)

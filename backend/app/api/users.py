@@ -22,7 +22,6 @@ from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-# TODO: Remove bookmark
 @router.get("/current", status_code=status.HTTP_200_OK, response_model=User)
 def get_user(
         auth: AuthTokens = Depends(get_auth_headers),

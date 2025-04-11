@@ -93,6 +93,30 @@ def bookmark_article(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
 
 
+@router.delete("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={
+    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked article."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
+    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while bookmarking article."},
+})
+def remove_bookmark(
+        article_url: str,
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
+):
+    """Removes bookmarked status for an article to a specific user"""
+    try:
+        # Set user session and get uid
+        auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
+        uid = auth_response.session.user.id
+
+        article_service = BookmarkedArticleService(BookmarkedArticleRepository(supabase_client))
+        article_service.unbookmark_article(article_url, uid)
+    except (AuthApiError, InvalidAuthHeaderError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
 @router.post(
     "/summary",
     status_code=status.HTTP_200_OK,
