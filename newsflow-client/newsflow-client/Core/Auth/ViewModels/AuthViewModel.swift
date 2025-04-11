@@ -15,9 +15,14 @@ enum UserState {
 @Observable
 @MainActor
 class AuthViewModel {
+    var userService: UserService
     var userState: UserState?
 
-    init() { Task { await setUserState() } }
+    init(userService: UserService) {
+        self.userService = userService
+
+        Task { await setUserState() }
+    }
 
     // MARK: - Auth requests
     private func setUserState() async {
@@ -36,6 +41,11 @@ class AuthViewModel {
             NFLogger.shared.logger.debug("Setting user state to logged out")
             userState = .loggedOut
         }
+    }
+
+    private func syncUserPreferences() async {
+        let preferences: [String] = (try? await userService.getUserCategoryPreferences()) ?? []
+        UserDefaultsManager.shared.setStringArray(value: preferences, forKey: .userArticleCategoryPreferences)
     }
 
     private func refreshUserState() async throws {
@@ -63,6 +73,7 @@ class AuthViewModel {
         switch response {
         case .success(let authResponse):
             saveAuthTokens(authResponse: authResponse)
+            await syncUserPreferences()
         case .failure(let error):
             throw error
         }

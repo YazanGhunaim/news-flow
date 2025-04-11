@@ -23,6 +23,22 @@ class UserService {
         }
     }
 
+    func getUserCategoryPreferences() async throws -> [String] {
+        let response: Result<[String], APIError> = await APIClient.shared.request(
+            url: EndpointManager.shared.url(for: .userPreferences), method: .get
+        )
+
+        switch response {
+        case .success(let preferences):
+            NFLogger.shared.logger.info("Successfully got user preferences")
+            // save preferences locally
+            return preferences
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to get user preferences")
+            throw error
+        }
+    }
+
     func setCategoryPreferences(categories: [String]) async throws {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
             url: EndpointManager.shared.url(for: .userPreferences), method: .post, body: categories

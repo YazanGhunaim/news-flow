@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-// TODO: Feed user defaults with cloud data on sign in and delete on sign out / delete acc
 @main
 struct newsflow_clientApp: App {
-    @State private var authViewModel = AuthViewModel()
+    @State private var authViewModel = AuthViewModel(userService: UserService())
 
     var body: some Scene {
         WindowGroup {
