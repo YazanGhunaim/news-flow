@@ -45,11 +45,7 @@ class Router {
         }
     }
 
-    func pop() {
-        path.removeLast()
-    }
+    func pop() { path.removeLast() }
 
-    func popToRoot() {
-        path.removeLast(path.count)
-    }
+    func popToRoot() { path.removeLast(path.count) }
 }

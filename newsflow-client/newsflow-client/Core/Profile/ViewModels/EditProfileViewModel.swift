@@ -22,7 +22,8 @@ class EditProfileViewModel: ObservableObject {
     }
 
     func fetchCategories() async {
-        categories = await categoryService.getCategories()
+        let _categories = await categoryService.getCategories()
+        categories = _categories.filter { $0 != "general" }
     }
 
     func updateUserCategoryPreferences(_ selectedCategories: [String]) async throws {

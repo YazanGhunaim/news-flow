@@ -75,7 +75,7 @@ struct ArticleView: View {
             // MARK: - Dim
             if isSummarizing {
                 Color.NFPrimary.opacity(0.3)
-                    .edgesIgnoringSafeArea(.all)
+                    .ignoresSafeArea()
                     .transition(.opacity)
             }
         }

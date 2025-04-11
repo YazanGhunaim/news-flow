@@ -40,7 +40,7 @@ struct ProfileView: View {
                 }
 
                 // MARK: Bookmarks
-                if let bookmarks = viewmodel.bookmarks {
+                if let bookmarks = viewmodel.bookmarks, !bookmarks.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Bookmarked Articles")
                             .font(.headline)
@@ -55,6 +55,8 @@ struct ProfileView: View {
                         }
                     }
                 }
+                
+                Spacer()
             }
             .padding()
             .task { await viewmodel.fetchBookmarks() }

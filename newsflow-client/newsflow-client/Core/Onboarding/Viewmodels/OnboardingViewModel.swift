@@ -22,7 +22,8 @@ class OnboardingViewModel {
     }
 
     func fetchCategories() async {
-        categories = await categoryService.getCategories()
+        let _categories = await categoryService.getCategories()
+        categories = _categories.filter { $0 != "general" }
     }
 
     func setUserCategoryPreferences(_ selectedCategories: [String]) async throws {

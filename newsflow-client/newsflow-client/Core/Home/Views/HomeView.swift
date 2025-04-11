@@ -95,34 +95,6 @@ extension HomeView {
     }
 
     var NewsArticlesScrollView: some View {
-        Group {
-            switch homeFiltersVM.selectedFilter.title {
-            case "trending":
-                TrendingArticles
-            default:
-                KeywordArticles
-            }
-        }
-    }
-
-    var TrendingArticles: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack {
-                ForEach(viewmodel.trendingArticles) { article in
-                    VStack {
-                        ArticleCell(article: article)
-                            .onTapGesture { router.navigate(to: .articleView(article: article)) }
-
-                        Divider()
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
-                }
-            }
-        }
-    }
-
-    var KeywordArticles: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack {
                 ForEach(viewmodel.articles[homeFiltersVM.selectedFilter.title] ?? []) { article in

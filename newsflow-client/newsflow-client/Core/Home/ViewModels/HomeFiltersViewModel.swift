@@ -16,17 +16,15 @@ struct HomeFilter: Identifiable, Equatable {
 @MainActor
 class HomeFiltersViewModel {
     var filters = [HomeFilter]()
-    var selectedFilter: HomeFilter = .init(title: "trending")
+    var selectedFilter: HomeFilter = .init(title: "general")
 
-    init() {
-        loadUserCategoryPreferences()
-    }
+    init() { loadUserCategoryPreferences() }
 
     func loadUserCategoryPreferences() {
         var saved = UserDefaultsManager.shared.getStringArray(forKey: .userArticleCategoryPreferences) ?? []
 
         // every user should get trending tab at beginning
-        saved.insert("trending", at: 0)
+        saved.insert("general", at: 0)
 
         self.filters = saved.map { HomeFilter(title: $0) }
     }

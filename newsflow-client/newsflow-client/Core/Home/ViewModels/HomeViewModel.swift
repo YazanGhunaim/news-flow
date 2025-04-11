@@ -10,9 +10,11 @@ import Foundation
 @Observable
 @MainActor
 class HomeViewModel {
-    var trendingArticles = [Article]()
-    var articles = [String: [Article]]()
+    let apiCategories: Set<String> = [
+        "business", "entertainment", "general", "health", "science", "sports", "technology",
+    ]
 
+    var articles = [String: [Article]]()
     var isLoading = false
 
     init(categories: [String]) { Task { await getArticles(forCategories: categories) } }
@@ -23,27 +25,26 @@ class HomeViewModel {
         defer { isLoading = false }
 
         for category in categories {
-            guard category != "trending" else {
-                await getTrendingArticles()
-                continue
+            if apiCategories.contains(category) {
+                articles[category] = try? await getTrendingArticles(forCategory: category) ?? []
+            } else {
+                articles[category] = try? await getArticleForKeyword(category) ?? []
             }
-
-            //            articles[category] = try? await getArticleForKeyword(category) ?? []
         }
     }
 
-    private func getTrendingArticles() async {
-        let params = ["page_size": "20"]
+    private func getTrendingArticles(forCategory category: String) async throws -> [Article]? {
+        let params = ["category": category, "page_size": "20"]
         let url = EndpointManager.shared.url(for: .topHeadlines, parameters: params)
         let response: Result<NewsResponse, APIError> = await APIClient.shared.request(url: url, method: .get)
 
         switch response {
         case .success(let newsResponse):
-            NFLogger.shared.logger.debug("Sucessfully fetched trending articles")
-            self.trendingArticles = newsResponse.articles
+            NFLogger.shared.logger.debug("Sucessfully fetched trending articles for category: \(category)")
+            return newsResponse.articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
-            self.trendingArticles = []
+            throw error
         }
     }
 
@@ -56,7 +57,7 @@ class HomeViewModel {
 
         switch response {
         case .success(let newsResponse):
-            NFLogger.shared.logger.debug("Failed to fetch articles for keyword: \(keyword)")
+            NFLogger.shared.logger.debug("Successfully fetched articles for keyword: \(keyword)")
             return newsResponse.articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
