@@ -20,7 +20,7 @@ from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-
+# TODO: Remove bookmark
 @router.post("/preferences", status_code=status.HTTP_204_NO_CONTENT)
 def set_user_preferences(
         preferences: List[NewsCategory],

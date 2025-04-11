@@ -8,6 +8,7 @@
 import Kingfisher
 import SwiftUI
 
+// TODO: Bug with buttons ( play -> pause -> replay to recreate )
 struct ArticleView: View {
     @State private var viewmodel: ArticleViewModel
     @State private var isSummarizing: Bool = false
