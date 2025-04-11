@@ -40,15 +40,17 @@ struct ProfileView: View {
                 }
 
                 // MARK: Bookmarks
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Bookmarked Articles")
-                        .font(.headline)
+                if let bookmarks = viewmodel.bookmarks {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Bookmarked Articles")
+                            .font(.headline)
 
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
-                            ForEach(viewmodel.bookmarks ?? []) { article in
-                                ArticleCell(article: article)
-                                    .onTapGesture { router.navigate(to: .articleView(article: article)) }
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 16) {
+                                ForEach(bookmarks) { article in
+                                    ArticleCell(article: article)
+                                        .onTapGesture { router.navigate(to: .articleView(article: article)) }
+                                }
                             }
                         }
                     }
