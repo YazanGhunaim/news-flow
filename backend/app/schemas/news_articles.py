@@ -50,6 +50,7 @@ class ProcessedArticle(BaseModel):
 
     Appending full content etc...
     """
+
     source: Source
     author: Optional[str] = None
     title: str

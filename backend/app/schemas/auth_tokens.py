@@ -7,5 +7,6 @@ class AuthTokens(BaseModel):
 
     access_token and refresh_token used to set supabase state
     """
+
     access_token: str
     refresh_token: str

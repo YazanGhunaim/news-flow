@@ -17,6 +17,10 @@ class UserService:
         self.repo = repo
         self.news_category_service = news_category_service
 
+    def fetch_user(self, uid: str):
+        """fetches user data from repo"""
+        return self.repo.get_user(uid)
+
     def add_user_preferences(
             self,
             uid: str,

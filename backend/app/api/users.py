@@ -6,6 +6,7 @@ from gotrue.errors import AuthApiError
 from starlette import status
 from supabase import Client
 
+from app.database.models.user import User
 from app.database.repositories.bookmarked_article_repo import BookmarkedArticleRepository
 from app.database.repositories.news_category_repo import NewsCategoryRepository
 from app.database.repositories.user_repo import UserRepository
@@ -20,7 +21,31 @@ from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
+
 # TODO: Remove bookmark
+@router.get("", status_code=status.HTTP_200_OK, response_model=User)
+def get_user(
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client)
+):
+    """gets user data"""
+    try:
+        # set user session
+        auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
+        uid = auth_response.session.user.id
+
+        user_service = UserService(
+            UserRepository(supabase_client),
+            news_category_service=NewsCategoryService(NewsCategoryRepository(supabase_client))
+        )
+
+        return user_service.fetch_user(uid)
+    except (AuthApiError, InvalidAuthHeaderError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
 @router.post("/preferences", status_code=status.HTTP_204_NO_CONTENT)
 def set_user_preferences(
         preferences: List[NewsCategory],

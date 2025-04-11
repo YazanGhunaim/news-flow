@@ -9,11 +9,13 @@ class BaseUser(BaseModel):
 
     data that can be safely returned about user
     """
+
     email: EmailStr
 
 
 class UserData(BaseModel):
     """User data model"""
+
     name: str
     username: str
 
@@ -23,11 +25,13 @@ class UserOptions(BaseModel):
 
     Wraps additional user data.
     """
+
     data: UserData
 
 
 class UserSignIn(BaseUser):
     """User signin model"""
+
     password: str
 
 
@@ -36,10 +40,16 @@ class UserSignUp(BaseUser):
 
     extra data needed from user to sign up
     """
+
     password: str
     options: UserOptions
 
 
 class UserUpdate(BaseUser):
+    """User update model
+
+    data needed from user when updating his profile
+    """
+
     password: Optional[str] = None
     data: Optional[UserData] = None
