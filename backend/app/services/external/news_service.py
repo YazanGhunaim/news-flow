@@ -4,7 +4,7 @@ from pprint import pprint
 from newsapi import NewsApiClient
 
 from app.config import get_config
-from app.schemas.news_articles import BaseNewsResponse, NewsCategory
+from app.schemas.news_articles import BaseNewsResponse, NewsAPICategory
 
 
 class NewsService:
@@ -18,9 +18,11 @@ class NewsService:
         self.config = get_config()
         self.news_api_client = NewsApiClient(api_key=self.config.news_api_key)
 
-    def fetch_top_headlines(self, keyword: str = None, sources: str = None, category: NewsCategory = None,
-                            page: int = None,
-                            page_size: int = None, language: str = "en") -> BaseNewsResponse:
+    def fetch_top_headlines(
+            self, keyword: str = None, sources: str = None, category: NewsAPICategory = None,
+            page: int = None,
+            page_size: int = None, language: str = "en"
+    ) -> BaseNewsResponse:
         """Fetch live top and breaking headlines.
 
         :param keyword: keyword to search for

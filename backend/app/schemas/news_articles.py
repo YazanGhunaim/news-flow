@@ -5,9 +5,37 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class NewsCategory(str, Enum):
-    """Enum class to represent News Categories"""
+class CustomNewsCategory(str, Enum):
+    """Enum class for categories recognized by news-api"""
+    AI = "AI"
+    CRYPTO = "crypto"
+    GAMING = "gaming"
+    POLITICS = "politics"
+    ENVIRONMENT = "environment"
+    TRAVEL = "travel"
+    CULTURE = "culture"
+    EDUCATION = "education"
+    ECONOMY = "economy"
+    STARTUPS = "startups"
+    SPACE = "space"
+    LIFESTYLE = "lifestyle"
+    FOOD = "food"
+    FASHION = "fashion"
 
+
+class NewsAPICategory(str, Enum):
+    """Enum class to represent News Categories recognized by news-api"""
+    BUSINESS = "business"
+    ENTERTAINMENT = "entertainment"
+    GENERAL = "general"
+    HEALTH = "health"
+    SCIENCE = "science"
+    SPORTS = "sports"
+    TECHNOLOGY = "technology"
+
+
+class NewsCategory(str, Enum):
+    """Enum class to represent newsflow categories ie combined of api and custom"""
     BUSINESS = "business"
     ENTERTAINMENT = "entertainment"
     GENERAL = "general"
@@ -20,6 +48,16 @@ class NewsCategory(str, Enum):
     CRYPTO = "crypto"
     GAMING = "gaming"
     POLITICS = "politics"
+    ENVIRONMENT = "environment"
+    TRAVEL = "travel"
+    CULTURE = "culture"
+    EDUCATION = "education"
+    ECONOMY = "economy"
+    STARTUPS = "startups"
+    SPACE = "space"
+    LIFESTYLE = "lifestyle"
+    FOOD = "food"
+    FASHION = "fashion"
 
 
 class Source(BaseModel):

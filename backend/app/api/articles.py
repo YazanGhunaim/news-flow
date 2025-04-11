@@ -19,7 +19,7 @@ from app.dependencies.auth import get_auth_headers
 from app.dependencies.news_service import get_news_service
 from app.dependencies.supabase_client import get_supabase_client
 from app.schemas.auth_tokens import AuthTokens
-from app.schemas.news_articles import NewsCategory, ProcessedArticle, ProcessedNewsResponse
+from app.schemas.news_articles import NewsAPICategory, ProcessedArticle, ProcessedNewsResponse
 from app.services.article_summary_service import ArticleSummaryService
 from app.services.bookmarked_article_service import BookmarkedArticleService
 from app.services.external.news_service import NewsService
@@ -29,13 +29,12 @@ from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 router = APIRouter(prefix="/articles", tags=["News Articles"])
 
 
-# TODO: separate news category model for custom keywords
 @router.get("/top-headlines", status_code=status.HTTP_200_OK, responses={
     status.HTTP_200_OK: {"description": "Successfully retrieved top headlines."},
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving top headlines."},
 }, response_model=ProcessedNewsResponse)
 def get_top_headlines(
-        keyword: str = None, sources: str = None, category: NewsCategory = NewsCategory.GENERAL, page: int = None,
+        category: NewsAPICategory, keyword: str = None, sources: str = None, page: int = None,
         page_size: int = None, language: str = "en",
         news_service: NewsService = Depends(get_news_service),
 ):

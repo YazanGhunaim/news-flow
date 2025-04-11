@@ -12,7 +12,7 @@ class TestArticleRetrieval:
         # Get top headlines
         response_top_headlines = test_api_client.get(
             "/articles/top-headlines",
-            params={"page_size": 5},
+            params={"category": "general", "page_size": 5},
         )
         assert response_top_headlines.status_code == 200
         assert response_top_headlines.json()["articles"]  # Articles exist
