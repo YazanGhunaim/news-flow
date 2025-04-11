@@ -40,7 +40,7 @@ class AuthViewModel {
 
     private func refreshUserState() async throws {
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .setUserSession), method: .post,
+            url: EndpointManager.shared.url(for: .setUserSession), method: .post,
             withRefreshToken: true
         )
 
@@ -57,7 +57,7 @@ class AuthViewModel {
         let loginRequest: UserLoginRequest = .init(email: email, password: password)
 
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .signIn), method: .post, body: loginRequest
+            url: EndpointManager.shared.url(for: .signIn), method: .post, body: loginRequest
         )
 
         switch response {
@@ -74,7 +74,7 @@ class AuthViewModel {
         )
 
         let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .signUp), method: .post, body: userRegRequest
+            url: EndpointManager.shared.url(for: .signUp), method: .post, body: userRegRequest
         )
 
         switch response {
@@ -87,7 +87,7 @@ class AuthViewModel {
 
     func deleteUserAccount() async {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .deleteUser), method: .delete
+            url: EndpointManager.shared.url(for: .deleteUser), method: .delete
         )
 
         switch response {
@@ -101,7 +101,7 @@ class AuthViewModel {
 
     func logoutUser() async {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .signOut), method: .post
+            url: EndpointManager.shared.url(for: .signOut), method: .post
         )
 
         switch response {

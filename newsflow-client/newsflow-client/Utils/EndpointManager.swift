@@ -5,14 +5,27 @@
 //  Created by Yazan Ghunaim on 4/6/25.
 //
 
+import Alamofire
 import Foundation
 
 class EndpointManager {
-    let baseURL = "192.168.0.107:8000"
-
     static let shared = EndpointManager()
-
     private init() {}
+
+    private let scheme = "http"
+    private let host = "192.168.0.107"
+    private let port = 8000
+
+    func url(for endpoint: Endpoint, parameters: [String: String]? = nil) -> String {
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+        components.port = port
+        components.path = endpoint.rawValue
+
+        if let params = parameters { components.queryItems = params.map { URLQueryItem(name: $0, value: $1) } }
+        return components.string ?? ""
+    }
 
     enum Endpoint: String {
         case topHeadlines = "/articles/top-headlines"
@@ -33,9 +46,4 @@ class EndpointManager {
 
         case getArticleCategories = "/preferences/categories"
     }
-
-    func getEndpointURL(for endpoint: Endpoint) -> String {
-        "http://\(baseURL)\(endpoint.rawValue)"
-    }
-
 }

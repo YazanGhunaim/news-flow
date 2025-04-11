@@ -10,7 +10,7 @@ import Foundation
 class CategoryService {
     func getCategories() async -> [String] {
         let response: Result<[String], APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .getArticleCategories), method: .get
+            url: EndpointManager.shared.url(for: .getArticleCategories), method: .get
         )
 
         switch response {

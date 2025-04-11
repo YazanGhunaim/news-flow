@@ -47,7 +47,7 @@ class ArticleViewModel {
     // MARK: Article operation
     func bookmarkArticle() async {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .bookmarkArticle), method: .post, body: article,
+            url: EndpointManager.shared.url(for: .bookmarkArticle), method: .post, body: article,
         )
 
         switch response {
@@ -62,7 +62,7 @@ class ArticleViewModel {
 
     func summarizeArticle() async -> String {
         let response: Result<ArticleSummary, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.getEndpointURL(for: .summarizeArticle), method: .post, body: article,
+            url: EndpointManager.shared.url(for: .summarizeArticle), method: .post, body: article,
         )
 
         switch response {

@@ -75,16 +75,6 @@ class APIClient {
         self.session = Session(interceptor: interceptor, eventMonitors: [logger])
     }
 
-    func buildURL(base: String, queryParams: [String: String]?) -> String? {
-        guard var components = URLComponents(string: base) else { return nil }
-
-        if let queryParams = queryParams {
-            components.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
-        }
-
-        return components.url?.absoluteString
-    }
-
     func request<T: Decodable, B: Encodable>(
         url: String,
         method: HTTPMethod = .get,

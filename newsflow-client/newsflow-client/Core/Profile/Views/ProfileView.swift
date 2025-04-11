@@ -8,50 +8,53 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var viewmodel = ProfileViewModel()
+    @State private var viewmodel = ProfileViewModel(userService: UserService())
     @Environment(Router.self) private var router
 
     var body: some View {
         NavigationView {
-            ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
                 // MARK: User data
-                VStack(alignment: .leading, spacing: 24) {
-                    if let user = viewmodel.user {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Username: @\(user.username)")
+                if let user = viewmodel.user {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Username: @\(user.username)")
 
-                            Text("Email: \(user.email)")
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.gray.opacity(0.1))
-                        .font(.subheadline.bold())
-                        .cornerRadius(8)
+                        Text("Email: \(user.email)")
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.gray.opacity(0.1))
+                    .font(.subheadline.bold())
+                    .cornerRadius(8)
+                }
+
+                // MARK: Edit and Settings buttons
+                HStack(spacing: 16) {
+                    CustomButton(enabled: true, height: 40, text: "Settings") {
+                        router.navigate(to: .profileSettingsView)
                     }
 
-                    HStack(spacing: 16) {
-                        CustomButton(enabled: true, height: 40, text: "Settings") {
-                            router.navigate(to: .profileSettingsView)
-                        }
-
-                        CustomButton(enabled: true, height: 40, text: "Edit Profile") {
-                            router.navigate(to: .editProfileView)
-                        }
-                    }
-
-                    VStack(alignment: .leading) {
-                        Text("Bookmarked Articles")
-                            .font(.title2)
-                            .padding(.bottom, 4)
-
-                        // Empty placeholder
-                        Text("No bookmarks yet.")
-                            .foregroundColor(.gray)
-                            .italic()
+                    CustomButton(enabled: true, height: 40, text: "Edit Profile") {
+                        router.navigate(to: .editProfileView)
                     }
                 }
-                .padding()
+
+                // MARK: Bookmarks
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Bookmarked Articles")
+                        .font(.headline)
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            ForEach(viewmodel.bookmarks ?? []) { article in
+                                ArticleCell(article: article)
+                                    .onTapGesture { router.navigate(to: .articleView(article: article)) }
+                            }
+                        }
+                    }
+                }
             }
+            .padding()
             .navigationTitle("\(viewmodel.user?.name ?? "Profile")")
         }
     }

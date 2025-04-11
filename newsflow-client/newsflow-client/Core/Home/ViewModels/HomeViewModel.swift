@@ -34,15 +34,12 @@ class HomeViewModel {
 
     private func getTrendingArticles() async {
         let params = ["page_size": "20"]
-        let url = APIClient.shared.buildURL(
-            base: EndpointManager.shared.getEndpointURL(for: .topHeadlines), queryParams: params)
-
-        let response: Result<NewsResponse, APIError> = await APIClient.shared.request(
-            url: url!, method: .get
-        )
+        let url = EndpointManager.shared.url(for: .topHeadlines, parameters: params)
+        let response: Result<NewsResponse, APIError> = await APIClient.shared.request(url: url, method: .get)
 
         switch response {
         case .success(let newsResponse):
+            NFLogger.shared.logger.debug("Sucessfully fetched trending articles")
             self.trendingArticles = newsResponse.articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
@@ -52,16 +49,14 @@ class HomeViewModel {
 
     private func getArticleForKeyword(_ keyword: String) async throws -> [Article]? {
         let params = ["page_size": "20", "keyword": keyword]
-        let url = APIClient.shared.buildURL(
-            base: EndpointManager.shared.getEndpointURL(for: .everyArticle), queryParams: params)
-
-        NFLogger.shared.logger.debug("Fetching articles for keyword: \(keyword)")
+        let url = EndpointManager.shared.url(for: .everyArticle, parameters: params)
         let response: Result<NewsResponse, APIError> = await APIClient.shared.request(
-            url: url!, method: .get
+            url: url, method: .get
         )
 
         switch response {
         case .success(let newsResponse):
+            NFLogger.shared.logger.debug("Failed to fetch articles for keyword: \(keyword)")
             return newsResponse.articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to fetch article categories: \(error)")
