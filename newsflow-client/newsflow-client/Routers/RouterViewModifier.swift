@@ -19,11 +19,17 @@ struct RouterViewModifier: ViewModifier {
             case .register:
                 RegistrationView()
             case .setCategoryPreferences:
-                PreferenceSelectionView()
+                OnboardingView()
             case .tabView:
                 TabBarView()
             case .articleView(let article):
                 ArticleView(article: article)
+            case .profileView:
+                ProfileView()
+            case .profileSettingsView:
+                ProfileSettingsView()
+            case .editProfileView:
+                EditProfileView()
             }
         }
         .environment(router)

@@ -58,6 +58,7 @@ struct RegistrationView: View {
                     }
                 }
             }
+            .padding()
 
             Spacer()
 

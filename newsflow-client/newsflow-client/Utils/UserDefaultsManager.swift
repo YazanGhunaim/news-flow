@@ -26,7 +26,12 @@ class UserDefaultsManager {
     func getStringArray(forKey key: UserDefaultsKeys) -> [String]? {
         return defualts.stringArray(forKey: key.rawValue)
     }
-
+    
+    func updateStringArray(value: [String], forKey key: UserDefaultsKeys) {
+        self.delete(forKey: key)
+        self.setStringArray(value: value, forKey: key)
+    }
+    
     func delete(forKey key: UserDefaultsKeys) {
         NFLogger.shared.logger.debug("Deleting \(key.rawValue) from UserDefaults")
         defualts.removeObject(forKey: key.rawValue)
@@ -34,7 +39,7 @@ class UserDefaultsManager {
 
     func deleteAll() {
         for key in UserDefaultsKeys.allCases {
-            defualts.removeObject(forKey: key.rawValue)
+            self.delete(forKey: key)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  PreferenceSelectionView.swift
+//  OnboardingView.swift
 //  newsflow-client
 //
 //  Created by Yazan Ghunaim on 3/31/25.
@@ -7,13 +7,12 @@
 
 import SwiftUI
 
-struct PreferenceSelectionView: View {
+struct OnboardingView: View {
     @Environment(Router.self) private var router
 
-    @State private var viewmodel = OnboardingViewModel()
     @State private var selectedIndices = [Int]()
-
     @State private var showErrorAlert: Bool = false
+    @State private var viewmodel = OnboardingViewModel(categoryService: CategoryService(), userService: UserService())
 
     var selectedEnough: Bool {
         selectedIndices.count >= 3 && selectedIndices.count <= 5
@@ -44,16 +43,18 @@ struct PreferenceSelectionView: View {
                         Text("Please select between 3 and 5 categories.")
                             .foregroundStyle(Color.red)
                     }
+
                     CustomButton(enabled: selectedEnough, text: "Submit") {
                         Task {
                             do {
-                                try await viewmodel.setCategoryPreferences(categories: selectedCategories)
+                                try await viewmodel.setUserCategoryPreferences(selectedCategories)
                                 router.navigate(to: .tabView)
                             } catch {
                                 showErrorAlert.toggle()
                             }
                         }
                     }
+                    .padding()
                 }
 
                 // push stuff up
@@ -70,5 +71,5 @@ struct PreferenceSelectionView: View {
 }
 
 #Preview {
-    PreferenceSelectionView()
+    OnboardingView()
 }

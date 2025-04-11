@@ -23,6 +23,7 @@ class EndpointManager {
         case signUp = "/users/sign_up"
         case signIn = "/users/sign_in"
         case signOut = "/users/sign_out"
+        case getUser = "/users/current"
         case updateUser = "/users/update"
         case deleteUser = "/users/delete"
         case setUserSession = "/users/set_session"

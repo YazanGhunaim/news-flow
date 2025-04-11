@@ -52,6 +52,7 @@ class AuthViewModel {
         }
     }
 
+    // MARK: User Auth
     func login(email: String, password: String) async throws {
         let loginRequest: UserLoginRequest = .init(email: email, password: password)
 
@@ -81,6 +82,34 @@ class AuthViewModel {
             saveAuthTokens(authResponse: authResponse)
         case .failure(let error):
             throw error
+        }
+    }
+
+    func deleteUserAccount() async {
+        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
+            url: EndpointManager.shared.getEndpointURL(for: .deleteUser), method: .delete
+        )
+
+        switch response {
+        case .success(_):
+            NFLogger.shared.logger.info("User account deleted successfully")
+            userState = .loggedOut
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to delete user account: \(error)")
+        }
+    }
+
+    func logoutUser() async {
+        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
+            url: EndpointManager.shared.getEndpointURL(for: .signOut), method: .post
+        )
+
+        switch response {
+        case .success(_):
+            NFLogger.shared.logger.info("User account logged out successfully")
+            userState = .loggedOut
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to log out user account: \(error)")
         }
     }
 

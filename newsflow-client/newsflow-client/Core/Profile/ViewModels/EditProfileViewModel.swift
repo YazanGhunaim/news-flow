@@ -1,15 +1,15 @@
 //
-//  OnboardingViewModel.swift
+//  EditProfileViewModel.swift
 //  newsflow-client
 //
-//  Created by Yazan Ghunaim on 3/31/25.
+//  Created by Yazan Ghunaim on 4/11/25.
 //
 
 import Foundation
 
 @Observable
 @MainActor
-class OnboardingViewModel {
+class EditProfileViewModel: ObservableObject {
     let categoryService: CategoryService
     let userService: UserService
 
@@ -25,7 +25,7 @@ class OnboardingViewModel {
         categories = await categoryService.getCategories()
     }
 
-    func setUserCategoryPreferences(_ selectedCategories: [String]) async throws {
-        try await userService.setCategoryPreferences(categories: selectedCategories)
+    func updateUserCategoryPreferences(_ selectedCategories: [String]) async throws {
+        try await userService.updateCategoryPreferences(categories: selectedCategories)
     }
 }

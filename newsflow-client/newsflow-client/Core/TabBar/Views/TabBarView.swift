@@ -19,17 +19,7 @@ struct TabBarView: View {
             }
 
             Tab("Profile", systemImage: "person.fill") {
-                VStack {
-                    Button {
-                        UserDefaultsManager.shared.deleteAll()
-                        let _ = KeychainManager.shared.deleteAllTokens()
-                    } label: {
-                        Text("DELETE ALL LOCAL TOKENS AND DATA")
-                    }
-                    .background(Color.red)
-                    .buttonStyle(.bordered)
-                    .buttonBorderShape(.roundedRectangle(radius: 8))
-                }
+                ProfileView()
             }
         }
         .navigationBarBackButtonHidden(true)

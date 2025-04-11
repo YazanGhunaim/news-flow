@@ -9,28 +9,29 @@ import SwiftUI
 
 struct CustomButton: View {
     var enabled: Bool
+    var height: CGFloat? = 50
     let text: String
     let action: () -> Void
 
     var body: some View {
-        Button {
-            action()
-        } label: {
+        Button(action: action) {
             Text(text)
                 .font(.headline)
                 .foregroundColor(.white)
-                .frame(width: 340, height: 50)
+                .padding(.vertical, height == nil ? 12 : 0)
+                .frame(height: height)
+                .frame(maxWidth: .infinity)
                 .background(enabled ? Color.NFPrimary : Color.NFPrimary.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .padding()
+                .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
         }
-        .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
         .disabled(!enabled)
     }
 }
 
 #Preview {
-    CustomButton(enabled: false, text: "Submit") {
+    CustomButton(enabled: true, text: "Submit") {
         print("Submitted")
     }
+    .padding()
 }
