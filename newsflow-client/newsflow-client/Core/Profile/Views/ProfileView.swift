@@ -45,7 +45,7 @@ struct ProfileView: View {
                         Text("Bookmarked Articles")
                             .font(.headline)
 
-                        ScrollView {
+                        ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 16) {
                                 ForEach(bookmarks) { article in
                                     ArticleCell(article: article)
@@ -55,7 +55,7 @@ struct ProfileView: View {
                         }
                     }
                 }
-                
+
                 Spacer()
             }
             .padding()

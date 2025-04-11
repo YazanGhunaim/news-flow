@@ -103,8 +103,10 @@ class ArticleViewModel {
 
     // MARK: - TTS
     func read(text: String) {
-        isSpeaking = true
+        guard !isSpeaking else { return }
+        
         NFLogger.shared.logger.debug("Reading article content...")
+        isSpeaking = true
 
         do {
             try textToSpeechService.speak(
@@ -125,7 +127,7 @@ class ArticleViewModel {
 
         defer {
             isPaused = true
-            isSpeaking = false
+            isSpeaking = true  // to keep play button disabled
         }
 
         textToSpeechService.pauseSpeaking()

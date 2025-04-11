@@ -8,7 +8,6 @@
 import Kingfisher
 import SwiftUI
 
-// TODO: Bug with buttons ( play -> pause -> replay to recreate )
 struct ArticleView: View {
     @State private var viewmodel: ArticleViewModel
     @State private var isSummarizing: Bool = false
@@ -106,7 +105,8 @@ extension ArticleView {
         HStack(alignment: .center, spacing: 24) {
             // MARK: Main TTS button
             FloatingButton(
-                isAnimating: $isSummarizing, isDisabled: $viewmodel.isSpeaking, image: "airpods.max"
+                isAnimating: $isSummarizing, isDisabled: $viewmodel.isSpeaking,
+                image: "airpods.max"
             ) {
                 guard !isSummarizing && !viewmodel.isSpeaking else { return }
                 isSummarizing = true
@@ -123,8 +123,8 @@ extension ArticleView {
             if viewmodel.isSpeaking || viewmodel.isPaused {
                 FloatingButton(
                     isAnimating: .constant(false), isDisabled: .constant(false),
-                    image: viewmodel.isSpeaking ? "pause.fill" : "play.fill",
-                    color: viewmodel.isSpeaking ? .red : .green
+                    image: viewmodel.isPaused ? "play.fill" : "pause.fill",
+                    color: viewmodel.isPaused ? .green : .red
                 ) {
                     if viewmodel.isPaused {
                         viewmodel.resumeReading()
