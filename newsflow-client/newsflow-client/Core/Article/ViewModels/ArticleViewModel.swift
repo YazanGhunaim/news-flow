@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 @Observable
-class ArticleViewModel {
+final class ArticleViewModel {
     let articleService: ArticleService
     let textToSpeechService: TextToSpeechService
     let article: Article
@@ -26,7 +26,8 @@ class ArticleViewModel {
 
         self.articleIsBookmarked = isArticleBookmarked()
     }
-
+	
+	// MARK: Article Operations
     func bookmarkArticle() async {
         do {
             try await articleService.bookmarkArticle(article)

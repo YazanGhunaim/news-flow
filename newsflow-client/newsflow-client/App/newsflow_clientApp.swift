@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct newsflow_clientApp: App {
-    @State private var authViewModel = AuthViewModel(userService: UserService())
+    @State private var authViewModel = AuthViewModel(authService: AuthService(), userService: UserService())
 
     var body: some Scene {
         WindowGroup {

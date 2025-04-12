@@ -14,33 +14,17 @@ enum UserState {
 
 @Observable
 @MainActor
-class AuthViewModel {
-    var userService: UserService
+final class AuthViewModel {
+    let authService: AuthService
+    let userService: UserService
+
     var userState: UserState?
 
-    init(userService: UserService) {
+    init(authService: AuthService, userService: UserService) {
+        self.authService = authService
         self.userService = userService
 
         Task { await setUserState() }
-    }
-
-    // MARK: - Auth requests
-    private func setUserState() async {
-        NFLogger.shared.logger.debug("Setting user state")
-        // check if auth tokens exist
-        if KeychainManager.shared.authTokensExist() {
-            NFLogger.shared.logger.debug("User tokens exist")
-            if (try? await refreshUserState()) != nil {
-                NFLogger.shared.logger.debug("Setting user state to logged in")
-                userState = .loggedIn
-            } else {
-                NFLogger.shared.logger.debug("Setting user state to logged out")
-                userState = .loggedOut
-            }
-        } else {
-            NFLogger.shared.logger.debug("Setting user state to logged out")
-            userState = .loggedOut
-        }
     }
 
     private func syncUserPreferences() async {
@@ -48,80 +32,62 @@ class AuthViewModel {
         UserDefaultsManager.shared.setStringArray(value: preferences, forKey: .userArticleCategoryPreferences)
     }
 
-    private func refreshUserState() async throws {
-        let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .setUserSession), method: .post,
-            withRefreshToken: true
-        )
+    // MARK: - Auth requests
+    private func setUserState() async {
+        NFLogger.shared.logger.debug("Setting user state")
 
-        switch response {
-        case .success(let authResponse):
-            saveAuthTokens(authResponse: authResponse)
-        case .failure(let error):
-            throw error
+        // check if auth tokens exist
+        if KeychainManager.shared.authTokensExist() {
+            NFLogger.shared.logger.debug("User tokens exist")
+
+            if await refreshUserState() {
+                NFLogger.shared.logger.debug("Setting user state to logged in")
+                userState = .loggedIn
+            } else {
+                NFLogger.shared.logger.debug("Setting user state to logged out")
+                userState = .loggedOut
+            }
+
+        } else {
+            NFLogger.shared.logger.debug("Setting user state to logged out")
+            userState = .loggedOut
         }
     }
 
     // MARK: User Auth
-    func login(email: String, password: String) async throws {
-        let loginRequest: UserLoginRequest = .init(email: email, password: password)
-
-        let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .signIn), method: .post, body: loginRequest
-        )
-
-        switch response {
-        case .success(let authResponse):
-            saveAuthTokens(authResponse: authResponse)
-            await syncUserPreferences()
-        case .failure(let error):
-            throw error
+    func refreshUserState() async -> Bool {
+        guard let authResponse = try? await authService.setUserSession() else {
+            return false
         }
+
+        saveAuthTokens(authResponse: authResponse)
+        return true
+    }
+
+    func login(email: String, password: String) async throws {
+        let authResponse = try await authService.login(email: email, password: password)
+
+        saveAuthTokens(authResponse: authResponse)
+        // load user preferences locally
+        await syncUserPreferences()
     }
 
     func register(name: String, username: String, email: String, password: String) async throws {
-        let userRegRequest: UserRegisterRequest = .init(
-            email: email, password: password, options: .init(data: .init(username: username, name: name))
+        let authResponse = try await authService.register(
+            name: name, username: username, email: email, password: password
         )
 
-        let response: Result<AuthResponse, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .signUp), method: .post, body: userRegRequest
-        )
-
-        switch response {
-        case .success(let authResponse):
-            saveAuthTokens(authResponse: authResponse)
-        case .failure(let error):
-            throw error
-        }
+        saveAuthTokens(authResponse: authResponse)
     }
 
-    func deleteUserAccount() async {
-        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .deleteUser), method: .delete
-        )
-
-        switch response {
-        case .success(_):
-            NFLogger.shared.logger.info("User account deleted successfully")
-            userState = .loggedOut
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to delete user account: \(error)")
-        }
+    func logoutUser() async throws {
+        try await authService.logoutUser()
+        userState = .loggedOut
     }
 
-    func logoutUser() async {
-        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .signOut), method: .post
-        )
-
-        switch response {
-        case .success(_):
-            NFLogger.shared.logger.info("User account logged out successfully")
-            userState = .loggedOut
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to log out user account: \(error)")
-        }
+    func deleteUserAccount() async throws {
+        try await authService.deleteUserAccount()
+        userState = .loggedOut
     }
 
     // MARK: - helper utils
