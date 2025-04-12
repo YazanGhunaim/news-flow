@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct FlowView: View {
-    @State private var viewmodel = FlowViewModel()
-    @State private var offset: CGSize = .zero
+    @State private var viewmodel = FlowViewModel(
+        articleService: ArticleService(), textToSpeechService: TextToSpeechService()
+    )
 
+    @State private var offset: CGSize = .zero
     @State private var shouldDismissTopCard = false
     @State private var hasStartedReading = false
 
@@ -43,6 +45,7 @@ struct FlowView: View {
                     }
                 }
             }
+            .onDisappear { viewmodel.pauseReading() }
             .onAppear { viewmodel.refreshCards() }
             .overlay(alignment: .bottom) { playbuttons }
             .navigationTitle("Daily Flow")

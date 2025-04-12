@@ -13,7 +13,8 @@ struct OnboardingHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
             HStack { Spacer() }
-
+			
+			// MARK: Header text
             Text(text)
                 .multilineTextAlignment(.center)
                 .font(.title.bold())

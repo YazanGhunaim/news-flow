@@ -8,6 +8,21 @@
 import Foundation
 
 class ArticleService {
+	func getTopHeadlines(forCategory category: String = "general", pageSize: Int = 5) async throws -> [Article] {
+        let params = ["category": category, "page_size": String(pageSize)]
+        let url = EndpointManager.shared.url(for: .topHeadlines, parameters: params)
+        let response: Result<NewsResponse, APIError> = await APIClient.shared.request(url: url, method: .get)
+
+        switch response {
+        case .success(let newsResponse):
+            NFLogger.shared.logger.debug("Sucessfully fetched top articles for category: \(category).")
+            return newsResponse.articles
+        case .failure(let error):
+            NFLogger.shared.logger.error("Failed to fetch to articles for today with error: \(error)")
+            throw error
+        }
+    }
+
     func bookmarkArticle(_ article: Article) async throws {
         let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
             url: EndpointManager.shared.url(for: .bookmarkArticle), method: .post, body: article,

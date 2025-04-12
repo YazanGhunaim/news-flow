@@ -7,10 +7,12 @@
 
 import Foundation
 
+//			return Article(fromArticle: article, withSummary: articleSummary.summary)
 @Observable
 @MainActor
 final class FlowViewModel: ObservableObject {
-    let textToSpeechService = TextToSpeechService()
+    let articleService: ArticleService
+    let textToSpeechService: TextToSpeechService
 
     private var tempTopArticles = [Article]()
     var topArticles = [Article]()
@@ -20,17 +22,18 @@ final class FlowViewModel: ObservableObject {
     var isPaused: Bool = false
     var errorMessage: String?
 
-    init() {
+    init(articleService: ArticleService, textToSpeechService: TextToSpeechService) {
+        self.articleService = articleService
+        self.textToSpeechService = textToSpeechService
+
         Task {
             await initializeDailyFlow()
             topArticles = tempTopArticles
         }
     }
 
-    func refreshCards() { topArticles = tempTopArticles }
-
     func initializeDailyFlow() async {
-        let articles = await getTopArticles() ?? []
+        let articles = await fetchTopHeadlines()
 
         for article in articles {
             do {
@@ -43,37 +46,23 @@ final class FlowViewModel: ObservableObject {
         }
     }
 
-    private func getTopArticles() async -> [Article]? {
-        let params = ["category": "technology", "page_size": "5"]
-        let url = EndpointManager.shared.url(for: .topHeadlines, parameters: params)
-        let response: Result<NewsResponse, APIError> = await APIClient.shared.request(url: url, method: .get)
-
-        switch response {
-        case .success(let newsResponse):
-            NFLogger.shared.logger.debug("Sucessfully fetched top articles for today.")
-            return newsResponse.articles
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to fetch to articles for today with error: \(error)")
-            failed = true
-            return nil
-        }
+    func refreshCards() {
+        topArticles = tempTopArticles
     }
 
-    private func summarizeArticle(forArticle article: Article) async throws -> Article {
-        let response: Result<ArticleSummary, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .summarizeArticle),
-            method: .post,
-            body: article
-        )
-
-        switch response {
-        case .success(let articleSummary):
-            NFLogger.shared.logger.info("Retrieved summary for \(article.url)")
-            return Article(fromArticle: article, withSummary: articleSummary.summary)
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to retrieve summary for \(article.url): \(error)")
-            throw error
+    // MARK: Articles
+    func fetchTopHeadlines() async -> [Article] {
+        guard let topHeadlines = try? await articleService.getTopHeadlines() else {
+            failed = true
+            return []
         }
+
+        return topHeadlines
+    }
+
+    func summarizeArticle(forArticle article: Article) async throws -> Article {
+        let summary = try await articleService.summarizeArticle(article)
+        return Article(fromArticle: article, withSummary: summary)
     }
 
     // MARK: - TTS

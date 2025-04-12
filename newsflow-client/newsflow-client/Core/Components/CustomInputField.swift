@@ -16,6 +16,7 @@ struct CustomInputField: View {
     var body: some View {
         VStack {
             HStack {
+				// MARK: Field logo
                 Image(systemName: imageName)
                     .resizable()
                     .scaledToFit()
