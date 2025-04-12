@@ -42,17 +42,17 @@ struct ProfileView: View {
 
                     // MARK: Bookmarks
                     if let bookmarks = viewmodel.bookmarks, !bookmarks.isEmpty {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("Bookmarked Articles")
                                 .font(.headline)
 
-                            VStack(alignment: .leading, spacing: 16) {
+                            let columns = [GridItem(.adaptive(minimum: 160))]
+                            LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(bookmarks) { article in
-                                    ArticleCell(article: article)
+                                    ArticleGridCell(article: article)
                                         .onTapGesture { router.navigate(to: .articleView(article: article)) }
                                 }
                             }
-
                         }
                     }
 

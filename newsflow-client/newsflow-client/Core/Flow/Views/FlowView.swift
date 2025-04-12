@@ -57,7 +57,7 @@ extension FlowView {
             FloatingButton(
                 isAnimating: .constant(false),
                 isDisabled: .constant(!viewmodel.isSpeaking && !viewmodel.isPaused),
-                image: viewmodel.isPaused ? "play.fill" : "pause.fill"
+                image: viewmodel.isPaused ? "play.fill" : "pause.fill",
             ) {
                 if viewmodel.isPaused {
                     viewmodel.resumeReading()
@@ -89,7 +89,7 @@ extension FlowView {
             ) {
                 viewmodel.stopReading()
                 shouldDismissTopCard = true
-				viewmodel.isPaused = false
+                viewmodel.isPaused = false
             }
             .opacity(viewmodel.topArticles.isEmpty ? 0.5 : 1.0)
 
