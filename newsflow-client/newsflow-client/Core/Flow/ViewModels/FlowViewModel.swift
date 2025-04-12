@@ -52,7 +52,8 @@ final class FlowViewModel: ObservableObject {
 
     // MARK: Articles
     func fetchTopHeadlines() async -> [Article] {
-        guard let topHeadlines = try? await articleService.getTopHeadlines(pageSize: 10) else {
+        guard let topHeadlines = try? await articleService.getTopHeadlines(forCategory: "technology", pageSize: 10)
+        else {
             failed = true
             return []
         }
