@@ -17,7 +17,7 @@ struct HomeView: View {
     init(homeFiltersVM: HomeFiltersViewModel) {
         let filters = homeFiltersVM.filters.map { $0.title }
         _homeFiltersVM = State(initialValue: homeFiltersVM)
-        _viewmodel = State(initialValue: HomeViewModel(categories: filters))
+        _viewmodel = State(initialValue: HomeViewModel(articleService: ArticleService(), categories: filters))
     }
 
     var body: some View {
