@@ -98,7 +98,6 @@ def processed_article_json():
     """returns a processed article json"""
     return {
         "source": {
-            "id": "techcrunch",
             "name": "TechCrunch"
         },
         "author": "John Doe",

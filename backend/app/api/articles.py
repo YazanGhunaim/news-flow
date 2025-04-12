@@ -19,10 +19,10 @@ from app.dependencies.auth import get_auth_headers
 from app.dependencies.news_service import get_news_service
 from app.dependencies.supabase_client import get_supabase_client
 from app.schemas.auth_tokens import AuthTokens
-from app.schemas.news_articles import NewsCategory, ProcessedArticle, ProcessedNewsResponse
+from app.schemas.news_articles import NewsAPICategory, ProcessedArticle, ProcessedNewsResponse
 from app.services.article_summary_service import ArticleSummaryService
 from app.services.bookmarked_article_service import BookmarkedArticleService
-from app.services.news_service import NewsService
+from app.services.external.news_service import NewsService
 from app.utils.article_utils import ArticleUtils
 from app.utils.auth import InvalidAuthHeaderError, set_supabase_session
 
@@ -34,7 +34,7 @@ router = APIRouter(prefix="/articles", tags=["News Articles"])
     status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while retrieving top headlines."},
 }, response_model=ProcessedNewsResponse)
 def get_top_headlines(
-        keyword: str = None, sources: str = None, category: NewsCategory = None, page: int = None,
+        category: NewsAPICategory, keyword: str = None, sources: str = None, page: int = None,
         page_size: int = None, language: str = "en",
         news_service: NewsService = Depends(get_news_service),
 ):
@@ -92,6 +92,30 @@ def bookmark_article(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
 
 
+@router.delete("/bookmark", status_code=status.HTTP_204_NO_CONTENT, responses={
+    status.HTTP_204_NO_CONTENT: {"description": "Successfully bookmarked article."},
+    status.HTTP_401_UNAUTHORIZED: {"description": "User tokens are invalid."},
+    status.HTTP_400_BAD_REQUEST: {"description": "An error occurred while bookmarking article."},
+})
+def remove_bookmark(
+        article_url: str,
+        auth: AuthTokens = Depends(get_auth_headers),
+        supabase_client: Client = Depends(get_supabase_client),
+):
+    """Removes bookmarked status for an article to a specific user"""
+    try:
+        # Set user session and get uid
+        auth_response = set_supabase_session(auth=auth, supabase_client=supabase_client)
+        uid = auth_response.session.user.id
+
+        article_service = BookmarkedArticleService(BookmarkedArticleRepository(supabase_client))
+        article_service.unbookmark_article(article_url, uid)
+    except (AuthApiError, InvalidAuthHeaderError) as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"{e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+
+
 @router.post(
     "/summary",
     status_code=status.HTTP_200_OK,
@@ -119,7 +143,7 @@ def summarize_article(
         article_summary, is_new = article_service.create_article_summary(article)
 
         return JSONResponse(
-            article_summary,
+            article_summary.model_dump(),
             status_code=status.HTTP_201_CREATED if is_new else status.HTTP_200_OK
         )
     except (AuthApiError, InvalidAuthHeaderError) as e:

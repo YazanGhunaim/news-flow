@@ -21,6 +21,18 @@ class BookmarkedArticleRepository(ABCRepository):
         response = self.db.table("bookmarked_articles").insert(article.model_dump()).execute()
         return response
 
+    def delete_bookmarked_article(self, article_url: str, uid: str):
+        """deletes an article from the bookmarks table to a specific user"""
+        response = (
+            self.db
+            .table("bookmarked_articles")
+            .delete()
+            .match({"user_id": uid, "url": article_url})
+            .execute()
+        )
+
+        return response.data
+
     def get_bookmarks_for_user(self, uid: str) -> List[ProcessedArticle]:
         """gets bookmarked articles per uid"""
         response = (
