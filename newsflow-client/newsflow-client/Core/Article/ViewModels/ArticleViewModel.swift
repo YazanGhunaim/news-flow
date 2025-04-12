@@ -10,17 +10,51 @@ import Foundation
 @MainActor
 @Observable
 class ArticleViewModel {
+    let articleService: ArticleService
+    let textToSpeechService: TextToSpeechService
     let article: Article
-    let textToSpeechService = TextToSpeechService()
 
     var errorMessage: String?
     var isSpeaking: Bool = false
     var isPaused: Bool = false
     var articleIsBookmarked: Bool = false
 
-    init(article: Article) {
+    init(articleService: ArticleService, textToSpeechService: TextToSpeechService, article: Article) {
+        self.articleService = articleService
+        self.textToSpeechService = textToSpeechService
         self.article = article
+
         self.articleIsBookmarked = isArticleBookmarked()
+    }
+
+    func bookmarkArticle() async {
+        do {
+            try await articleService.bookmarkArticle(article)
+            addBookmarkedArticleToUserDefaults()
+            articleIsBookmarked = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func unbookmarkArticle() async {
+        do {
+            try await articleService.unbookmarkArticle(article)
+            removeBookmarkedArticleFromUserDefaults()
+            articleIsBookmarked = false
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func summarizeArticle() async -> String {
+        do {
+            let articleSummary = try await articleService.summarizeArticle(article)
+            return articleSummary
+        } catch {
+            errorMessage = error.localizedDescription
+            return ""
+        }
     }
 
     // MARK: User Defaults
@@ -54,57 +88,10 @@ class ArticleViewModel {
 
     }
 
-    // MARK: Article operation
-    func bookmarkArticle() async {
-        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .bookmarkArticle), method: .post, body: article,
-        )
-
-        switch response {
-        case .success(_):
-            NFLogger.shared.logger.info("Bookmarked article \(self.article.url)")
-            addBookmarkedArticleToUserDefaults()
-            articleIsBookmarked = true
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to bookmark article \(self.article.url): \(error)")
-        }
-    }
-
-    func unbookmarkArticle() async {
-        let params = ["article_url": article.url]
-        let response: Result<EmptyEntity, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .bookmarkArticle, parameters: params), method: .delete
-        )
-
-        switch response {
-        case .success(_):
-            removeBookmarkedArticleFromUserDefaults()
-            articleIsBookmarked = false
-            NFLogger.shared.logger.info("Successfully unbookmarked article \(self.article.url)")
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to unbookmark article \(self.article.url): \(error)")
-        }
-    }
-
-    func summarizeArticle() async -> String {
-        let response: Result<ArticleSummary, APIError> = await APIClient.shared.request(
-            url: EndpointManager.shared.url(for: .summarizeArticle), method: .post, body: article,
-        )
-
-        switch response {
-        case .success(let article):
-            NFLogger.shared.logger.info("Retrieved summary for \(self.article.url)")
-            return article.summary
-        case .failure(let error):
-            NFLogger.shared.logger.error("Failed to retrieve summary for \(self.article.url): \(error)")
-            return ""
-        }
-    }
-
     // MARK: - TTS
     func read(text: String) {
         guard !isSpeaking else { return }
-        
+
         NFLogger.shared.logger.debug("Reading article content...")
         isSpeaking = true
 

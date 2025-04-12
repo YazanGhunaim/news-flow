@@ -18,7 +18,13 @@ struct ArticleView: View {
         self.article = article
         self.isSummarizing = isSummarizing
 
-        _viewmodel = State(initialValue: ArticleViewModel(article: article))
+        _viewmodel = State(
+            initialValue: ArticleViewModel(
+                articleService: ArticleService(),
+                textToSpeechService: TextToSpeechService(),
+                article: article
+            )
+        )
     }
 
     var body: some View {
@@ -150,7 +156,7 @@ extension ArticleView {
         dateString: "2025-04-05T10:45:00Z"
     )
 
-	NavigationStack {
+    NavigationStack {
         ArticleView(article: mockArticle)
     }
     .preferredColorScheme(.light)
