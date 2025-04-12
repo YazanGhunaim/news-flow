@@ -9,71 +9,70 @@ import Kingfisher
 import SwiftUI
 
 struct ArticleCard: View {
-    @Binding var cards: [Article]
+    @Binding var articles: [Article]
+    let article: Article
+    let isTop: Bool
+    @Binding var shouldDismiss: Bool
 
     @State private var offset: CGSize = .zero
     @State private var isExpanding: Bool = false
 
-    let card: Article
-
     var body: some View {
-        ZStack {
-            KFImage(URL(string: card.imageUrl!))
+        ZStack(alignment: .bottom) {
+            // MARK: Image
+            KFImage(URL(string: article.imageUrl ?? ""))
                 .resizable()
                 .scaledToFill()
-                .frame(width: 300, height: 400)
-                .cornerRadius(20)
-                .shadow(radius: 5)
-                .overlay(
-                    Text(card.title)
-                        .font(.largeTitle)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding(),
-                    alignment: .bottom
-                )
+                .frame(width: 320, height: 440)
+                .clipped()
+                .cornerRadius(24)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 8)
+
+            // MARK: Gradient Overlay
+            LinearGradient(
+                gradient: Gradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .cornerRadius(24)
+
+            // MARK: Info Content
+            VStack(alignment: .leading, spacing: 8) {
+                Spacer()
+
+                Text(article.title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+
+                Text(article.description)
+                    .font(.footnote)
+                    .foregroundColor(.white.opacity(0.9))
+                    .lineLimit(2)
+            }
+            .padding()
         }
-        .offset(x: offset.width, y: 0)
+        .frame(width: 320, height: 440)
+        .offset(offset)
         .rotationEffect(.degrees(Double(offset.width / 20)))
-        .gesture(
-            DragGesture()
-                .onChanged { gesture in
-                    offset = gesture.translation
+        .onChange(of: shouldDismiss) { oldValue, newValue in
+            if newValue && isTop {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    offset = CGSize(width: 500, height: 0)
                 }
-                .onEnded { _ in
-                    if offset.width > 150 {
-                        bookmarkCard()
-                    } else if offset.width < -150 {
-                        skipCard()
-                    } else {
-                        offset = .zero
-                    }
-                }
-        )
-    }
-
-    func bookmarkCard() {
-        withAnimation {
-            offset.width = 500  // Move off-screen to the right
-            removeCard()
+                removeSelfAfterDelay()
+            }
         }
     }
 
-    func skipCard() {
-        withAnimation {
-            offset.width = -500  // Move off-screen to the left
-            removeCard()
-        }
-    }
-
-    func removeCard() {
-        // allow time for animation
+    private func removeSelfAfterDelay() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            cards.removeAll { $0.id == card.id }
+            if let index = articles.firstIndex(where: { $0.id == article.id }) {
+                articles.remove(at: index)
+            }
+            shouldDismiss = false  // reset for next card
         }
     }
 }
-
-//#Preview {
-//    ArticleCard()
-//}

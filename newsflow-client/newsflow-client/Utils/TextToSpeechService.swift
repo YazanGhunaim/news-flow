@@ -43,7 +43,7 @@ class TextToSpeechService: NSObject, AVSpeechSynthesizerDelegate {
             let defaultLanguage = Locale.current.language.languageCode?.identifier ?? "en-US"
             utterance.voice = AVSpeechSynthesisVoice(language: defaultLanguage)
         }
-        utterance.rate = 0.4  // bit slower pace than default (0.5)
+        //        utterance.rate = 0.4  // bit slower pace than default (0.5)
 
         if currentUtterance != nil, synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)

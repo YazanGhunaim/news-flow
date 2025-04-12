@@ -111,7 +111,7 @@ class ArticleViewModel {
         do {
             try textToSpeechService.speak(
                 text: text,
-                withVoice: "com.apple.ttsbundle.siri_male_en-US_compact"
+                withVoice: "com.apple.ttsbundle.Allison-premium"
             ) {
                 NFLogger.shared.logger.debug("Reading article content complete...")
                 self.isSpeaking = false

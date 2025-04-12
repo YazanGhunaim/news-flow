@@ -31,6 +31,7 @@ struct Article: Codable, Identifiable, Hashable {
     let url: String
     let imageUrl: String?
     let content: String
+    let summary: String?
 
     let dateString: String
     var date: Date? {
@@ -46,6 +47,36 @@ struct Article: Codable, Identifiable, Hashable {
         case url
         case dateString = "date"
         case content
+        case summary
+    }
+
+    init(
+        id: UUID = UUID(), source: Source, author: String? = nil, title: String, description: String, url: String,
+        imageUrl: String? = nil, content: String, summary: String? = nil, dateString: String
+    ) {
+        self.id = id
+        self.source = source
+        self.author = author
+        self.title = title
+        self.description = description
+        self.url = url
+        self.imageUrl = imageUrl
+        self.content = content
+        self.summary = summary
+        self.dateString = dateString
+    }
+
+    init(fromArticle article: Article, withSummary summary: String) {
+        self.id = article.id
+        self.source = article.source
+        self.author = article.author
+        self.title = article.title
+        self.description = article.description
+        self.url = article.url
+        self.imageUrl = article.imageUrl
+        self.content = article.content
+        self.dateString = article.dateString
+        self.summary = summary
     }
 }
 
@@ -54,7 +85,7 @@ struct ArticleSummary: Codable, Identifiable {
 
     let url: String
     let summary: String
-    
+
     enum CodingKeys: String, CodingKey {
         case url = "article_url"
         case summary

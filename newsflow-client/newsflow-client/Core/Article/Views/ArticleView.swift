@@ -150,7 +150,7 @@ extension ArticleView {
         dateString: "2025-04-05T10:45:00Z"
     )
 
-    return NavigationStack {
+	NavigationStack {
         ArticleView(article: mockArticle)
     }
     .preferredColorScheme(.light)
