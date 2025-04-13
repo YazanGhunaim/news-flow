@@ -94,6 +94,7 @@ final class AuthViewModel {
     private func saveAuthTokens(authResponse: AuthResponse) {
         let _ = KeychainManager.shared.saveToken(authResponse.session.accessToken, forKey: .userAccessToken)
         let _ = KeychainManager.shared.saveToken(authResponse.session.refreshToken, forKey: .userRefreshToken)
+        let _ = UserDefaultsManager.shared.setString(value: authResponse.session.user.id, forKey: .userID)
     }
 
     func isValidEmail(_ email: String) -> Bool {

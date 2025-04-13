@@ -70,6 +70,7 @@ final class FlowViewModel: ObservableObject {
     func read(text: String, onComplete: @escaping () -> Void) {
         guard !isSpeaking else { return }
 
+        AnalyticsManager.shared.logEvent(.flowStarted(.init(timestamp: Date())))
         NFLogger.shared.logger.debug("Reading article content...")
         isSpeaking = true
 
