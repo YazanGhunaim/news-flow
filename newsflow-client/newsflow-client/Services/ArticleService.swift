@@ -74,9 +74,10 @@ class ArticleService {
         )
 
         switch response {
-        case .success(let article):
-            NFLogger.shared.logger.info("Retrieved summary for \(article.url)")
-            return article.summary
+        case .success(let summary):
+            AnalyticsManager.shared.logEvent(.articleSummarized(.init(timestamp: Date())))
+            NFLogger.shared.logger.info("Retrieved summary for \(summary.url)")
+            return summary.summary
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to retrieve summary for \(article.url): \(error)")
             throw error

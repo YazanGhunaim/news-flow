@@ -21,6 +21,11 @@ struct ArticleCard: View {
         ZStack(alignment: .bottom) {
             // MARK: Image
             KFImage(URL(string: article.imageUrl ?? ""))
+                .placeholder {
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(Color.NFPrimary)
+                        .frame(width: 320, height: 440)
+                }
                 .resizable()
                 .scaledToFill()
                 .frame(width: 320, height: 440)

@@ -15,9 +15,20 @@ class UserDefaultsManager {
     enum UserDefaultsKeys: String, CaseIterable {
         case userArticleCategoryPreferences = "user_article_category_preferences"
         case userBookmarkUrls = "user_article_bookmarks_urls"
+        case userID = "user_id"
     }
 
     private init() {}
+
+    func setString(value: String?, forKey key: UserDefaultsKeys) {
+        NFLogger.shared.logger.debug("Setting value for \(key.rawValue) in UserDefaults")
+        defualts.set(value, forKey: key.rawValue)
+    }
+
+    func getString(forKey key: UserDefaultsKeys) -> String? {
+        NFLogger.shared.logger.debug("Getting \(key.rawValue) from UserDefaults")
+        return defualts.string(forKey: key.rawValue)
+    }
 
     func setStringArray(value: [String], forKey key: UserDefaultsKeys) {
         NFLogger.shared.logger.debug("Setting value for \(key.rawValue) in UserDefaults")
