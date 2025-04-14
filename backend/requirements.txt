@@ -81,7 +81,7 @@ tzlocal==5.3.1
 urllib3==1.26.20
 uvicorn==0.34.0
 w3lib==2.3.1
-websockets==14.2
+websockets
 wheel==0.45.1
 yarl==1.18.3
 zipp==3.21.0
