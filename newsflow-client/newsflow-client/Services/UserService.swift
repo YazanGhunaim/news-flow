@@ -71,7 +71,7 @@ class UserService {
         }
     }
 
-    func getUserBookmarks() async -> [Article]? {
+    func getUserBookmarks() async throws -> [Article] {
         let response: Result<[Article], APIError> = await APIClient.shared.request(
             url: EndpointManager.shared.url(for: .userBookmarks), method: .get
         )
@@ -82,7 +82,7 @@ class UserService {
             return articles
         case .failure(let error):
             NFLogger.shared.logger.error("Failed to retrieve user bookmarks with error: \(error)")
-            return nil
+			throw error
         }
     }
 }

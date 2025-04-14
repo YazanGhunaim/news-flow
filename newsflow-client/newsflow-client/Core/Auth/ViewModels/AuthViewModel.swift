@@ -29,7 +29,10 @@ final class AuthViewModel {
 
     private func syncUserPreferences() async {
         let preferences: [String] = (try? await userService.getUserCategoryPreferences()) ?? []
+        let bookmarked_urls = (try? await userService.getUserBookmarks().map { $0.url }) ?? []
+
         UserDefaultsManager.shared.setStringArray(value: preferences, forKey: .userArticleCategoryPreferences)
+        UserDefaultsManager.shared.setStringArray(value: bookmarked_urls, forKey: .userBookmarkUrls)
     }
 
     // MARK: - Auth requests
