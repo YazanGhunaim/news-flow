@@ -26,5 +26,5 @@ class ProfileViewModel {
 
     func fetchUser() async { user = await userService.getUser() }
 
-    func fetchBookmarks() async { bookmarks = await userService.getUserBookmarks() }
+    func fetchBookmarks() async { bookmarks = try? await userService.getUserBookmarks() }
 }
