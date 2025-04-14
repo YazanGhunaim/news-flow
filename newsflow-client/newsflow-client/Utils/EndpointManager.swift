@@ -12,15 +12,15 @@ class EndpointManager {
     static let shared = EndpointManager()
     private init() {}
 
-    private let scheme = "http"
-    private let host = "192.168.0.107"
-    private let port = 8000
+    private let scheme = "https"
+    private let host = "news-flow-backend-a9v9.onrender.com"
+    //    private let port = 8000
 
     func url(for endpoint: Endpoint, parameters: [String: String]? = nil) -> String {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
-        components.port = port
+        //        components.port = port
         components.path = endpoint.rawValue
 
         if let params = parameters { components.queryItems = params.map { URLQueryItem(name: $0, value: $1) } }
