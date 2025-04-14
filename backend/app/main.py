@@ -17,7 +17,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 log.info("Starting NewsFlow!")
 
-app = FastAPI()
+app = FastAPI(title="NewsFlow RestAPI")
 
 app.include_router(articles.router)
 app.include_router(users_auth.router)
