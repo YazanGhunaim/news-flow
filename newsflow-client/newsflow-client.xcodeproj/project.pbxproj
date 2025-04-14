@@ -161,6 +161,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		EAEDFF3B2DAC57D600D54915 /* Upload dSYM to firebase */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

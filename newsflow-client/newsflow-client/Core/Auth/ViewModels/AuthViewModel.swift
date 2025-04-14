@@ -32,7 +32,6 @@ final class AuthViewModel {
         let bookmarked_urls = (try? await userService.getUserBookmarks().map { $0.url }) ?? []
 
         UserDefaultsManager.shared.setStringArray(value: preferences, forKey: .userArticleCategoryPreferences)
-		print(bookmarked_urls)
         UserDefaultsManager.shared.setStringArray(value: bookmarked_urls, forKey: .userBookmarkUrls)
     }
 
