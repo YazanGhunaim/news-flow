@@ -22,8 +22,8 @@ This project demonstrates the design and development of a client-server applicat
 
 | Layer       | Technology                 |
 |-------------|----------------------------|
-| Frontend    | SwiftUI (iOS)              |
-| Backend     | FastAPI (Python)           |
+| iOS Client    | Swift and Swift-UI              |
+| Backend    | Python and FastAPI           |
 | Auth & DB   | Supabase     |
 | Summarization | OpenAI API         |
 | Analytics   | Firebase Analytics & Crashlytics |
