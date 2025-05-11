@@ -8,6 +8,7 @@ Welcome to the official repository of **NewsFlow** a personalized, AI-powered ne
 This project demonstrates the design and development of a client-server application capable of:
 
 - Delivering AI-summarized news articles
+- Providing daily audio summaries of news headlines
 - Matching content with user-selected preferences
 - Providing a secure authentication experience via Supabase
 
